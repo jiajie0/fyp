@@ -12,13 +12,11 @@
                     <!-- 添加开发者的名字和 ID -->
                     <p>Welcome, <strong>{{ Auth::guard('developer')->user()->DeveloperName }}</strong>!</p>
                     <p>Your ID: <strong>{{ Auth::guard('developer')->user()->DeveloperID }}</strong></p>
-                    <form method="POST" action="{{ route('logout') }}">
+                    <form action="{{ route('logout') }}" method="POST">
                         @csrf
-                        <button type="submit" class="btn btn-danger">Logout</button>
-                    </form>
-                    <form method="POST" action="{{ route('logout') }}">
-                        @csrf
-                        <button type="submit" class="btn btn-danger">Logout</button>
+                        @method('DELETE')
+                        <button type="submit"
+                            class="btn btn-danger">Logout</button>
                     </form>
 
 

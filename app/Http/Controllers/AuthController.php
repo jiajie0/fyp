@@ -28,7 +28,10 @@ class AuthController extends Controller
         ]);
 
         // 尝试使用自定义守卫验证
-        if (Auth::guard('player')->attempt(['PlayerEmail' => $validatedData['PlayerEmail'], 'PlayerPW' => $validatedData['PlayerPW']])) {
+        if (
+            Auth::guard('player')->attempt([
+                'PlayerEmail' => $validatedData['PlayerEmail'],
+                'password' => $validatedData['PlayerPW']])) {
             $request->session()->regenerate();
             return redirect()->route('welcome')->with('success', 'Login successful');
         }
@@ -96,7 +99,7 @@ class AuthController extends Controller
         return back()->withErrors(['DeveloperEmail' => 'Invalid email or password.'])->withInput();
     }
 
-    // show developer login page
+    // show developer Register page
     public function showDeveloperRegister()
     {
         return view('auth.developer-register');
@@ -203,35 +206,42 @@ class AuthController extends Controller
 
     public function logout(Request $request)
     {
-        // 如果请求参数包含 'action' 并且值为 'destroy'
+        // 检查是否有 'action' 参数，且值为 'destroy'
         if ($request->has('action') && $request->input('action') === 'destroy') {
-            // 仅登出 web 用户
+            // 登出 web 用户
             Auth::guard('web')->logout();
+
+            // 清空所有会话数据并重生令牌
+            $request->session()->flush();
             $request->session()->invalidate();
             $request->session()->regenerateToken();
-            return redirect('/');
+
+            return redirect('/')->with('success', 'Logged out successfully!');
         }
 
-        // 根据当前的认证守卫来决定重定向的路径
+        // 根据当前认证守卫登出相应用户
         if (Auth::guard('developer')->check()) {
-            // 登出开发者，并重定向到开发者登录页面
             Auth::guard('developer')->logout();
+
+            // 清空会话数据并重生令牌
+            $request->session()->flush();
             $request->session()->invalidate();
             $request->session()->regenerateToken();
+
             return redirect()->route('developer.login')->with('success', 'Logged out successfully!');
         }
 
-        // 登出所有用户
+        // 如果没有指定具体守卫，则登出所有用户
         Auth::guard('web')->logout();
         Auth::guard('developer')->logout();
         Auth::guard('player')->logout();
         Auth::guard('staff')->logout();
 
-        // 清除会话和重生令牌
+        // 清空会话数据并重生令牌
+        $request->session()->flush();
         $request->session()->invalidate();
         $request->session()->regenerateToken();
 
-        // 重定向到首页或其他页面
         return redirect('/')->with('success', 'Logged out successfully!');
     }
 

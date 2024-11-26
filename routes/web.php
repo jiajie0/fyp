@@ -17,7 +17,6 @@ use App\Http\Middleware\IsStaff;
 
 
 
-
 // Route::get('/', function () {
 //     return view('welcome');
 // });
@@ -73,13 +72,16 @@ Route::get('/dashboard', function () {
 //});
 
 // 登出路由
-Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
+Route::delete('/logout', [AuthController::class, 'logout'])->name('logout');
 
 
-
-// Player 专属路由
+// Developer 专属路由
 Route::middleware(['auth:developer', IsDeveloper::class])->group(function () {
     Route::get('/developer-home', [DeveloperController::class, 'home'])->name('developer.home');
+});
+
+Route::middleware(['auth:player', IsPlayer::class])->group(function () {
+    Route::get('/home', [PlayerController::class, 'home'])->name('home');
 });
 
 

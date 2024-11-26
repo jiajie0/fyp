@@ -106,6 +106,8 @@
                 <p>Welcome, <strong>{{ Auth::guard('player')->user()->PlayerName }}</strong>!</p>
                 <p>Your ID: <strong>{{ Auth::guard('player')->user()->PlayerID }}</strong></p>
             </section>
+        @else
+            <p>Please <a href="{{ route('player.login') }}">log in</a> to see your details.</p>
         @endauth
         <div class="top-banner">
             <img src="https://via.placeholder.com/800x300" alt="Top Banner">
