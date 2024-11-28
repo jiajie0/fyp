@@ -70,4 +70,6 @@ class Game extends Model
     {
         return $this->hasMany(Rating::class, 'GameID', 'GameID');
     }
+
+    
 }

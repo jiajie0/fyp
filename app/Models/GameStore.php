@@ -40,4 +40,5 @@ class GameStore extends Model
     {
         return $this->belongsTo(Game::class, 'GameID', 'GameID');
     }
+
 }

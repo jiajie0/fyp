@@ -27,13 +27,12 @@ class AuthController extends Controller
             'PlayerPW' => 'required|string|min:8',
         ]);
 
-        // 尝试使用自定义守卫验证
-        if (
-            Auth::guard('player')->attempt([
-                'PlayerEmail' => $validatedData['PlayerEmail'],
-                'password' => $validatedData['PlayerPW']])) {
+        $player = Player::where('PlayerEmail', $validatedData['PlayerEmail'])->first();
+
+        if ($player && Hash::check($validatedData['PlayerPW'], $player->PlayerPW)) {
+            Auth::guard('player')->login($player);
             $request->session()->regenerate();
-            return redirect()->route('welcome')->with('success', 'Login successful');
+            return redirect()->route('player.home')->with('success', 'Login successful');
         }
 
         return back()->withErrors(['PlayerEmail' => 'Invalid email or password.'])->withInput();
@@ -85,13 +84,10 @@ class AuthController extends Controller
             'DeveloperPW' => 'required|string|min:8',
         ]);
 
-        // 使用自定义守卫进行认证
-        if (
-            Auth::guard('developer')->attempt([
-                'DeveloperEmail' => $validatedData['DeveloperEmail'],
-                'password' => $validatedData['DeveloperPW']
-            ])
-        ) {
+        $developer = Developer::where('DeveloperEmail', $validatedData['DeveloperEmail'])->first();
+
+        if ($developer && Hash::check($validatedData['DeveloperPW'], $developer->DeveloperPW)) {
+            Auth::guard('developer')->login($developer);
             $request->session()->regenerate();
             return redirect()->route('developer.home')->with('success', 'Login successful');
         }

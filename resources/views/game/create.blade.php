@@ -55,13 +55,37 @@
         <!-- GameAvatar field -->
         <div>
             <label for="GameAvatar">GameAvatar</label>
-            <input type="file" name="GameAvatar" id="GameAvatar" accept="image/*" />
+            <input type="file" name="GameAvatar" id="GameAvatar" accept="image/*" onchange="previewImage(event)" />
+        </div>
+
+        <!-- Image Preview -->
+        <div>
+            <p>Image Preview:</p>
+            <img id="imagePreview" src="" alt="Your Uploaded Image" style="max-width: 300px; display: none;" />
         </div>
 
         <div>
             <input type="submit" value="Save New Game">
         </div>
     </form>
+
+    <script>
+        function previewImage(event) {
+            const input = event.target;
+            const preview = document.getElementById('imagePreview');
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    preview.src = e.target.result;
+                    preview.style.display = 'block';
+                };
+                reader.readAsDataURL(input.files[0]);
+            } else {
+                preview.src = '';
+                preview.style.display = 'none';
+            }
+        }
+    </script>
 </body>
 
 </html>

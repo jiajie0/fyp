@@ -145,4 +145,30 @@ class GameController extends Controller
         ]);
     }
 
+    public function addToGameStore(Request $request, $gameID)
+    {
+        // 获取当前登录的玩家 ID
+        $playerID = Auth::guard('player')->id();
+
+        // 检查是否已添加过该游戏
+        $exists = \App\Models\GameStore::where('PlayerID', $playerID)
+            ->where('GameID', $gameID)
+            ->exists();
+
+        if ($exists) {
+            return redirect()->back()->with('error', 'This game is already in your store!');
+        }
+
+        // 添加到游戏商店
+        \App\Models\GameStore::create([
+            'PlayerID' => $playerID,
+            'GameID' => $gameID,
+            'GameAchievementsCount' => 0,
+            'PlayerAchievementsCount' => 0,
+            'TotalPlayTime' => 0,
+        ]);
+
+        return redirect()->back()->with('success', 'Game added to your store successfully!');
+    }
+
 }

@@ -6,6 +6,7 @@ use App\Http\Controllers\DeveloperController;
 use App\Http\Controllers\StaffController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\GameController;
+use App\Http\Controllers\GameStoreController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Middleware\IsPlayer;
 use App\Http\Middleware\IsDeveloper;
@@ -24,6 +25,7 @@ use App\Http\Middleware\IsStaff;
 
 Route::get('/', [GameController::class, 'showWelcomePage'])->name('welcome');
 Route::get('/game/{game}/detail', [GameController::class, 'showGameDetails'])->name('game.detail');
+Route::post('/game/{game}/add-to-store', [GameController::class, 'addToGameStore'])->name('game.addToStore')->middleware('auth:player');
 
 
 Route::get('/player-login', [AuthController::class, 'showPlayerLogin'])->name('player.login');
@@ -57,6 +59,10 @@ Route::post('/game', [GameController::class, 'store'])->name('game.store');
 Route::get('/game/{game}/edit', [GameController::class, 'edit'])->name('game.edit');
 Route::put('/game/{game}/update', [GameController::class, 'update'])->name('game.update');
 Route::delete('/game/{game}/delete', [GameController::class, 'delete'])->name('game.delete');
+
+// gamestore CRUD
+Route::get('/game_store', [GameStoreController::class, 'index'])->name('game_store.index');
+Route::delete('/game_store/{playerID}/{gameID}', [GameStoreController::class, 'delete'])->name('game_store.delete');
 
 //player homepage
 Route::get('/home', [PlayerController::class, 'home'])->name('home');
