@@ -35,6 +35,7 @@ class GameController extends Controller
             'GamePrice' => 'required|numeric|min:0',
             'GameAchievementsCount' => 'nullable|integer|min:0',
             'GameAvatar' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'GameReferenceImages.*' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
 
         // 检查并处理文件上传
@@ -56,6 +57,17 @@ class GameController extends Controller
             //     'storage_path' => $fullPath,
             //     'exists_in_storage' => file_exists($fullPath),  // 检查文件是否存在
             // ]);
+        }
+
+        if ($request->hasFile('GameReferenceImages')) {
+            $referenceImages = [];
+            foreach ($request->file('GameReferenceImages') as $file) {
+                $randomFileName = Str::random(40) . '.' . $file->getClientOriginalExtension();
+                $destinationPath = storage_path('app/public/games/GameReferenceImages');
+                $file->move($destinationPath, $randomFileName);
+                $referenceImages[] = 'storage/games/GameReferenceImages/' . $randomFileName;
+            }
+            $data['GameReferenceImages'] = $referenceImages; // 存储路径集合
         }
 
         // 设置 GameUploadDate 为当前日期
@@ -98,19 +110,36 @@ class GameController extends Controller
 
         // 处理头像上传
         if ($request->hasFile('GameAvatar')) {
-            if ($game->GameAvatar) {
-                // 删除旧头像
-                $oldGameAvatarPath = str_replace('/storage', 'public/storage', $game->GameAvatar);
-                Storage::delete($oldGameAvatarPath);
-            }
-
             $file = $request->file('GameAvatar');
-            $path = $file->storeAs(
-                'public/games/GameAvatar',
-                Str::random(40) . '.' . $file->getClientOriginalExtension()  // 使用原始文件的扩展名
-            );
-            $data['GameAvatar'] = Storage::url($path);
+            $randomFileName = Str::random(40) . '.' . $file->getClientOriginalExtension();
+
+            // 使用 move() 将文件移动到指定目录
+            $destinationPath = storage_path('app/public/games/GameAvatar');  // 设置目标路径
+            $file->move($destinationPath, $randomFileName);  // 移动文件
+
+            // 保存文件路径到数据库
+            $data['GameAvatar'] = 'storage/games/GameAvatar/' . $randomFileName;  // 这里返回的是相对于 public 目录的路径
+
+            // 检查文件是否成功存储
+            // $fullPath = $destinationPath . '\\' . $randomFileName;
+            // dd([
+            //     'file_name' => $randomFileName,
+            //     'storage_path' => $fullPath,
+            //     'exists_in_storage' => file_exists($fullPath),  // 检查文件是否存在
+            // ]);
         }
+
+        if ($request->hasFile('GameReferenceImages')) {
+            $referenceImages = [];
+            foreach ($request->file('GameReferenceImages') as $file) {
+                $randomFileName = Str::random(40) . '.' . $file->getClientOriginalExtension();
+                $destinationPath = storage_path('app/public/games/GameReferenceImages');
+                $file->move($destinationPath, $randomFileName);
+                $referenceImages[] = 'storage/games/GameReferenceImages/' . $randomFileName;
+            }
+            $data['GameReferenceImages'] = $referenceImages; // 存储路径集合
+        }
+
 
         $game->update($data);
 
@@ -133,7 +162,7 @@ class GameController extends Controller
 
     public function showWelcomePage()
     {
-        $game = Game::select('GameID', 'GameName', 'GameAvatar')->get();
+        $game = Game::select('GameID', 'GameName', 'GameAvatar', 'GameReferenceImages')->get();
         return view('welcome', ['game' => $game]);
     }
 

@@ -76,6 +76,16 @@
         </div>
 
         <div>
+            <label for="GameReferenceImages">Game Reference Images (up to 10)</label>
+            <input type="file" name="GameReferenceImages[]" id="GameReferenceImages" accept="image/*" multiple
+                onchange="previewMultipleImages(event)" />
+        </div>
+
+        <div id="referenceImagesPreview" style="display: flex; gap: 10px; flex-wrap: wrap;">
+            <!-- Images will be appended here -->
+        </div>
+
+        <div>
             <input type="submit" value="Update Game">
         </div>
     </form>
@@ -94,6 +104,32 @@
             } else {
                 preview.src = '';
                 preview.style.display = 'none';
+            }
+        }
+
+        function previewMultipleImages(event) {
+            const input = event.target;
+            const previewContainer = document.getElementById('referenceImagesPreview');
+
+            // Clear any existing images
+            previewContainer.innerHTML = '';
+
+            if (input.files) {
+                Array.from(input.files).forEach(file => {
+                    const reader = new FileReader();
+
+                    reader.onload = function(e) {
+                        const img = document.createElement('img');
+                        img.src = e.target.result;
+                        img.style.maxWidth = '100px';
+                        img.style.maxHeight = '100px';
+                        img.alt = 'Reference Image';
+                        img.style.margin = '5px';
+                        previewContainer.appendChild(img);
+                    };
+
+                    reader.readAsDataURL(file);
+                });
             }
         }
     </script>

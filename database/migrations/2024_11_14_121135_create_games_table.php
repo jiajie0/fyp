@@ -25,6 +25,7 @@ return new class extends Migration
             $table->decimal('GamePrice', 8, 2)->default(0);
             $table->integer('GameAchievementsCount')->default(0);
             $table->string('GameAvatar')->nullable();
+            $table->json('GameReferenceImages')->nullable(); // 用于存储多个图片的路径
             $table->timestamps();
         });
     }

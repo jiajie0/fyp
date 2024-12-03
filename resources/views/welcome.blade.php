@@ -63,14 +63,44 @@
         }
 
         .game-card {
-            width: 150px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin: 20px;
+            border: 1px solid #ddd;
             border-radius: 10px;
             overflow: hidden;
+            width: 300px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
         }
 
         .game-card img {
-            width: 100%;
             display: block;
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+        }
+
+        .game-details {
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+            padding: 10px;
+            width: 100%;
+        }
+
+        .game-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin-right: 10px;
+        }
+
+        .game-name {
+            font-size: 18px;
+            font-weight: bold;
+            color: #333;
         }
 
         .nav-bar {
@@ -122,9 +152,22 @@
         <div class="new-releases">
             @foreach ($game as $game)
                 <div class="game-card">
-                    <a href="{{ route('game.detail', ['game' => $game]) }}">
-                        <img src="{{ $game->GameAvatar }}" alt="{{ $game->GameName }}">
-                    </a>
+                    <!-- 显示第一张 GameReferenceImages -->
+                    @if (!empty($game->GameReferenceImages) && is_array($game->GameReferenceImages))
+                        <img src="{{ asset($game->GameReferenceImages[0]) }}" alt="Game Reference Image"
+                            style="width: 100%; height: auto;" />
+                    @else
+                        <p>No Reference Images</p>
+                    @endif
+
+                    <!-- 显示 GameAvatar -->
+                    @if ($game->GameAvatar)
+                        <img src="{{ asset($game->GameAvatar) }}" alt="Game Avatar"
+                            style="width: 100%; height: auto;" />
+                    @else
+                        <p>No Avatar</p>
+                    @endif
+
                     <p>{{ $game->GameName }}</p>
                 </div>
             @endforeach

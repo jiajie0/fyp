@@ -14,6 +14,11 @@ class Game extends Model
     protected $primaryKey = 'GameID';
     public $incrementing = false;
     protected $keyType = 'string';
+    protected $casts = [
+        'GameReferenceImages' => 'array', // 自动处理 JSON 字段为数组
+    ];
+    
+
     use HasFactory;
 
     protected static function boot()
@@ -48,7 +53,8 @@ class Game extends Model
         'GameCategory',
         'GamePrice',
         'GameAchievementsCount',
-        'GameAvatar'
+        'GameAvatar',
+        'GameReferenceImages'
     ];
 
     // 游戏与开发者之间的关系：一个开发者可以开发多个游戏
@@ -71,5 +77,5 @@ class Game extends Model
         return $this->hasMany(Rating::class, 'GameID', 'GameID');
     }
 
-    
+
 }

@@ -32,7 +32,8 @@
                 <th>RatingScore</th>
                 <th>GamePrice</th>
                 <th>GameAchievementsCount</th>
-                <th>GameAvatar</th> <!-- New column for GameAvatar -->
+                <th>GameAvatar</th> 
+                <th>GameReferenceImages</th>
                 <th>Edit</th>
                 <th>Delete</th>
             </tr>
@@ -53,6 +54,15 @@
                             <img src="{{ $game->GameAvatar }}" alt="Game Avatar" style="width: 50px; height: auto;" />
                         @else
                             No Avatar
+                        @endif
+                    </td>
+                    <td>
+                        @if($game->GameReferenceImages)
+                            @foreach($game->GameReferenceImages as $image)
+                                <img src="{{ asset($image) }}" alt="Game Reference Image" style="width: 50px; height: auto;" />
+                            @endforeach
+                        @else
+                            No Reference Images
                         @endif
                     </td>
                     <td>
