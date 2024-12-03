@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
+
 class Rating extends Model
 {
     //通常，Laravel 会将模型类名转换为小写复数形式作为表名。例如，Player 类会默认对应一个名为 players
@@ -42,6 +43,7 @@ class Rating extends Model
     protected $fillable = [
         'RatingID',
         'PlayerID',
+        'GameID',
         'RatingMark',
         'RatingText',
         'RatingImageURL',
@@ -50,9 +52,15 @@ class Rating extends Model
         'TotalLikeReceived',
     ];
 
-    // 定义与 Player 模型的关系：一个玩家可以有多篇帖子
+    // 定义与 Player 模型的关系：一个评分属于一个玩家
     public function player()
     {
         return $this->belongsTo(Player::class, 'PlayerID', 'PlayerID');
+    }
+
+    // 定义与 Game 模型的关系：一个评分属于一个游戏
+    public function game()
+    {
+        return $this->belongsTo(Game::class, 'GameID', 'GameID');
     }
 }

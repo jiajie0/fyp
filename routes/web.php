@@ -7,6 +7,7 @@ use App\Http\Controllers\StaffController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\GameController;
 use App\Http\Controllers\GameStoreController;
+use App\Http\Controllers\RatingController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Middleware\IsPlayer;
 use App\Http\Middleware\IsDeveloper;
@@ -25,8 +26,11 @@ use App\Http\Middleware\IsStaff;
 
 Route::get('/', [GameController::class, 'showWelcomePage'])->name('welcome');
 Route::get('/game/{game}/detail', [GameController::class, 'showGameDetails'])->name('game.detail');
-Route::post('/game/{game}/add-to-store', [GameController::class, 'addToGameStore'])->name('game.addToStore')->middleware('auth:player');
-
+Route::post('/game/{gameID}/add-to-store', [GameStoreController::class, 'addToGameStore'])->name('game.addToStore');
+Route::post('/game/{gameID}/rate', [RatingController::class, 'store'])->name('game.rate');
+Route::get('/rating/{ratingID}/edit', [RatingController::class, 'edit'])->name('game.editRating');
+Route::put('/rating/{ratingID}/update', [RatingController::class, 'update'])->name('game.updateRating');
+Route::delete('/rating/{ratingID}/delete', [RatingController::class, 'destroy'])->name('game.deleteRating');
 
 Route::get('/player-login', [AuthController::class, 'showPlayerLogin'])->name('player.login');
 Route::get('/staff-login', [AuthController::class, 'showStaffLogin'])->name('staff.login');
@@ -72,10 +76,6 @@ Route::get('/dashboard', function () {
     return view('dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
 
-//Developer home page
-//Route::middleware(['auth'])->group(function () {
-//    Route::get('/developer-home', [DeveloperController::class, 'home'])->name('developer.home');
-//});
 
 // 登出路由
 Route::delete('/logout', [AuthController::class, 'logout'])->name('logout');
@@ -90,11 +90,6 @@ Route::middleware(['auth:player', IsPlayer::class])->group(function () {
     Route::get('/home', [PlayerController::class, 'home'])->name('home');
 });
 
-
-//做不到
-// Route::middleware(['auth:developer', 'isDeveloper'])->group(function () {
-//     Route::get('/developer-home', [DeveloperController::class, 'home'])->name('developer.home');
-// });
 
 // Player 专属路由
 Route::middleware(['auth', 'isPlayer'])->group(function () {

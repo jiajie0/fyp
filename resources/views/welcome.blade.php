@@ -5,6 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Home Page</title>
+    <link href="https://cdn.jsdelivr.net/npm/remixicon/fonts/remixicon.css" rel="stylesheet">
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -38,6 +39,11 @@
 
         .sidebar ul li a .icon {
             margin-right: 10px;
+        }
+
+        .home-icon {
+            color: yellow;
+            /* 设置图标颜色为黄色 */
         }
 
         .content {
@@ -77,12 +83,12 @@
     <div class="sidebar">
         <h2>fyp app</h2>
         <ul>
-            <li><a href="#"><span class="icon">🏠</span> Home</a></li>
-            <li><a href="#"><span class="icon">🏆</span> Rating</a></li>
-            <li><a href="#"><span class="icon">⭐</span> Recommended</a></li>
-            <li><a href="#"><span class="icon">⬆️</span> Update</a></li>
-            <li><a href="#"><span class="icon">🎮</span> My Game</a></li>
-            <li><a href="#"><span class="icon">⚙️</span> Settings</a></li>
+            <li><a href="#"><i class="ri-home-line"></i> Home</a></li>
+            <li><a href="#"><i class="ri-trophy-line"></i> Rating</a></li>
+            <li><a href="#"><i class="ri-star-line"></i> Recommended</a></li>
+            <li><a href="#"><i class="ri-arrow-up-line"></i> Update</a></li>
+            <li><a href="{{ route('game_store.index') }}"><i class="ri-gamepad-line"></i> My Game</a></li>
+            <li><a href="#"><i class="ri-settings-line"></i> Settings</a></li>
         </ul>
     </div>
     <div class="content">

@@ -17,6 +17,9 @@ return new class extends Migration
             $table->string('PlayerID');
             $table->foreign('PlayerID')->references('PlayerID')->on('players')->onDelete('cascade');
 
+            $table->string('GameID');
+            $table->foreign('GameID')->references('GameID')->on('games')->onDelete('cascade');
+
             $table->text('PostText');
             $table->string('PostImageURL')->nullable();
             $table->string('PostVideoURL')->nullable();

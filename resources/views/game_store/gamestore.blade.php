@@ -27,22 +27,34 @@
             <table border="1">
                 <tr>
                     <th>PlayerID</th>
+                    <th>GameAvatar</th>
                     <th>GameID</th>
+                    <th>GameName</th>
+                    <th>GameCategory</th>
                     <th>GameAchievementsCount</th>
                     <th>PlayerAchievementsCount</th>
                     <th>TotalPlayTime</th>
                     <th>Delete</th>
                 </tr>
-                @foreach ($game_store as $store)
+                @foreach ($game_store as $game_store_item)
                     <tr>
-                        <td>{{ $store->PlayerID }}</td>
-                        <td>{{ $store->GameID }}</td>
-                        <td>{{ $store->GameAchievementsCount }}</td>
-                        <td>{{ $store->PlayerAchievementsCount }}</td>
-                        <td>{{ $store->TotalPlayTime }}</td>
+                        <td>{{ $game_store_item->PlayerID }}</td>
+                        <td>
+                            @if ($game_store_item->game->GameAvatar)
+                                <img src="{{ asset( $game_store_item->game->GameAvatar) }}" alt="Game Avatar" style="width: 50px; height: 50px;">
+                            @else
+                                No Avatar
+                            @endif
+                        </td>
+                        <td>{{ $game_store_item->GameID }}</td>
+                        <td>{{ $game_store_item->game->GameName }}</td>
+                        <td>{{ $game_store_item->game->GameCategory }}</td>
+                        <td>{{ $game_store_item->GameAchievementsCount }}</td>
+                        <td>{{ $game_store_item->PlayerAchievementsCount }}</td>
+                        <td>{{ $game_store_item->TotalPlayTime }}</td>
                         <td>
                             <form method="post"
-                                action="{{ route('game_store.delete', ['playerID' => $store->PlayerID, 'gameID' => $store->GameID]) }}">
+                                action="{{ route('game_store.delete', ['playerID' => $game_store_item->PlayerID, 'gameID' => $game_store_item->GameID]) }}">
                                 @csrf
                                 @method('delete')
                                 <input type="submit" value="Delete" />

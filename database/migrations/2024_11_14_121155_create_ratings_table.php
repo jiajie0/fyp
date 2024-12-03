@@ -17,7 +17,10 @@ return new class extends Migration
             $table->string('PlayerID');
             $table->foreign('PlayerID')->references('PlayerID')->on('players')->onDelete('cascade');
 
-            $table->integer('RatingMark');
+            $table->string('GameID');
+            $table->foreign('GameID')->references('GameID')->on('games')->onDelete('cascade');
+
+            $table->boolean('RatingMark');  // 用于存储 true 或 false (recommended,not_recommended)
             $table->text('RatingText')->nullable();
             $table->string('RatingImageURL')->nullable();
             $table->string('RatingVideoURL')->nullable();

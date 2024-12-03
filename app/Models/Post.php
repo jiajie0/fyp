@@ -44,6 +44,7 @@ class Post extends Model
     protected $fillable = [
         'PostID',
         'PlayerID',
+        'GameID',
         'PostText',
         'PostImageURL',
         'PostVideoURL',
@@ -55,5 +56,11 @@ class Post extends Model
     public function player()
     {
         return $this->belongsTo(Player::class, 'PlayerID', 'PlayerID');
+    }
+
+    // 定义与 Game 模型的关系：一个Game可以有多篇帖子
+    public function game()
+    {
+        return $this->belongsTo(Game::class, 'GameID', 'GameID');
     }
 }
