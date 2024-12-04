@@ -2,26 +2,21 @@
     <!-- Session Status -->
     <x-auth-session-status class="mb-4" :status="session('status')" />
 
-    <form method="POST" action="{{ route('staff.login') }}"> <!-- <form method="POST" action="route('player.login.submit'"> -->
+    <form method="POST" action="{{ route('staff.login') }}">
         @csrf
 
         <!-- Email Address -->
         <div>
-            <x-input-label for="email" :value="__('Email')" />
-            <x-text-input id="email" class="block mt-1 w-full" type="email" name="PlayerEmail" :value="old('email')" required autofocus autocomplete="username" />
-            <x-input-error :messages="$errors->get('PlayerEmail')" class="mt-2" />
+            <x-input-label for="StaffEmail" :value="__('Email')" />
+            <x-text-input id="StaffEmail" class="block mt-1 w-full" type="email" name="StaffEmail" :value="old('StaffEmail')" required autofocus autocomplete="username" />
+            <x-input-error :messages="$errors->get('StaffEmail')" class="mt-2" />
         </div>
 
         <!-- Password -->
         <div class="mt-4">
-            <x-input-label for="password" :value="__('Password')" />
-
-            <x-text-input id="password" class="block mt-1 w-full"
-                            type="password"
-                            name="PlayerPW"
-                            required autocomplete="current-password" />
-
-            <x-input-error :messages="$errors->get('PlayerPW')" class="mt-2" />
+            <x-input-label for="StaffPW" :value="__('Password')" />
+            <x-text-input id="StaffPW" class="block mt-1 w-full" type="password" name="StaffPW" required autocomplete="current-password" />
+            <x-input-error :messages="$errors->get('StaffPW')" class="mt-2" />
         </div>
 
         <!-- Remember Me -->
@@ -46,7 +41,7 @@
     </form>
 
     <div class="mt-4 text-center">
-        <p>Not a Staff? <a href="{{ route('player.login') }}" class="text-indigo-600">Switch to Player Login</a> | <a href="{{ route('developer.login') }}" class="text-indigo-600">Switch to Developer Login</a></p>
+        <p>Not a staff? <a href="{{ route('player.login') }}" class="text-indigo-600">Switch to Player Login</a> | <a href="{{ route('staff.login') }}" class="text-indigo-600">Switch to Staff Login</a></p>
         <p>Don't have an account? <a href="{{ route('staff.register') }}" class="text-indigo-600">Register as Staff</a></p>
     </div>
 </x-guest-layout>

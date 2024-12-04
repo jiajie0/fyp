@@ -51,6 +51,7 @@ class Kernel extends HttpKernel
     protected $routeMiddleware = [
         'auth' => \App\Http\Middleware\Authenticate::class,
         'verified' => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
+        'auth.custom' => \App\Http\Middleware\Authenticate::class,
 
         // 自定义中间件
         'isPlayer' => \App\Http\Middleware\IsPlayer::class,

@@ -32,7 +32,7 @@ class AuthController extends Controller
         if ($player && Hash::check($validatedData['PlayerPW'], $player->PlayerPW)) {
             Auth::guard('player')->login($player);
             $request->session()->regenerate();
-            return redirect()->route('player.home')->with('success', 'Login successful');
+            return redirect()->route('welcome')->with('success', 'Login successful');
         }
 
         return back()->withErrors(['PlayerEmail' => 'Invalid email or password.'])->withInput();
@@ -127,56 +127,52 @@ class AuthController extends Controller
         return redirect()->route('developer.login')->with('success', 'Developer registered successfully');
     }
 
-
+//99999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999
     // show staff login page
     public function showStaffLogin()
     {
         return view('auth.staff-login');
     }
 
-    // staff login logic
+    // staff Login logic
     public function staffLogin(Request $request)
     {
-        // 验证请求数据
         $validatedData = $request->validate([
             'StaffEmail' => 'required|email',
             'StaffPW' => 'required|string|min:8',
         ]);
 
-        // 尝试使用提供的邮箱和密码进行认证
         $staff = Staff::where('StaffEmail', $validatedData['StaffEmail'])->first();
 
-        // 检查玩家是否存在并且密码是否正确
-        // 使用自定义守卫进行认证
-        if (Auth::guard('staff')->attempt(['StaffEmail' => $validatedData['StaffEmail'], 'password' => $validatedData['StaffPW']])) {
+        if ($staff && Hash::check($validatedData['StaffPW'], $staff->StaffPW)) {
+            Auth::guard('staff')->login($staff);
             $request->session()->regenerate();
             return redirect()->route('staff.home')->with('success', 'Login successful');
         }
 
-        // 登录失败，返回错误信息
         return back()->withErrors(['StaffEmail' => 'Invalid email or password.'])->withInput();
     }
 
-    // show staff register page
+    // show staff Register page
     public function showStaffRegister()
     {
         return view('auth.staff-register');
     }
 
-    // staff register logic
+    // staff Register logic
     public function staffRegister(Request $request)
     {
         // 验证请求数据
         $validatedData = $request->validate([
-            'StaffName' => 'required|string|max:255', // 字段名保持与数据库一致
+            'StaffName' => 'required|string|max:255',
             'StaffPW' => 'required|string|min:8|confirmed',
-            'StaffEmail' => 'required|email|unique:staff,StaffEmail',
+            'StaffEmail' => 'required|email|unique:staff,StaffEmail',//原本加s
         ]);
 
         // 对密码进行加密处理
         $validatedData['StaffPW'] = Hash::make($validatedData['StaffPW']);
 
-        // 创建员工
+        // 创建开发者
         Staff::create([
             'StaffName' => $validatedData['StaffName'],
             'StaffPW' => $validatedData['StaffPW'],
@@ -186,20 +182,7 @@ class AuthController extends Controller
         // 注册成功后重定向到登录页面
         return redirect()->route('staff.login')->with('success', 'Staff registered successfully');
     }
-
-    // public function logout(Request $request)
-    // {
-    //     // 确保登出开发者
-    //     Auth::guard('developer')->logout();
-
-    //     // 清理会话
-    //     $request->session()->invalidate();
-    //     $request->session()->regenerateToken();
-
-    //     // 重定向到登录页面
-    //     return redirect()->route('developer.login')->with('success', 'Logged out successfully!');
-    // }
-
+//99999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999
     public function logout(Request $request)
     {
         // 检查是否有 'action' 参数，且值为 'destroy'
@@ -216,20 +199,20 @@ class AuthController extends Controller
         }
 
         // 根据当前认证守卫登出相应用户
-        if (Auth::guard('developer')->check()) {
-            Auth::guard('developer')->logout();
+        if (Auth::guard('staff')->check()) {
+            Auth::guard('staff')->logout();
 
             // 清空会话数据并重生令牌
             $request->session()->flush();
             $request->session()->invalidate();
             $request->session()->regenerateToken();
 
-            return redirect()->route('developer.login')->with('success', 'Logged out successfully!');
+            return redirect()->route('staff.login')->with('success', 'Logged out successfully!');
         }
 
         // 如果没有指定具体守卫，则登出所有用户
         Auth::guard('web')->logout();
-        Auth::guard('developer')->logout();
+        Auth::guard('staff')->logout();
         Auth::guard('player')->logout();
         Auth::guard('staff')->logout();
 

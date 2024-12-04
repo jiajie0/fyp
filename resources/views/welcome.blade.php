@@ -11,13 +11,14 @@
             font-family: Arial, sans-serif;
             margin: 0;
             display: flex;
+            background-color: #f9f9f9;
         }
 
         .sidebar {
             width: 200px;
             background-color: #f4f4f4;
             padding: 20px;
-            height: 100vh;
+            height: 100%
             box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
         }
 
@@ -43,7 +44,6 @@
 
         .home-icon {
             color: yellow;
-            /* 设置图标颜色为黄色 */
         }
 
         .content {
@@ -52,7 +52,7 @@
         }
 
         .top-banner img {
-            width: 100%;
+            width: 90%;
             border-radius: 10px;
         }
 
@@ -60,47 +60,59 @@
             display: flex;
             gap: 15px;
             margin-top: 20px;
+            flex-wrap: wrap;
         }
 
         .game-card {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
+            width: 375px;
             margin: 20px;
             border: 1px solid #ddd;
             border-radius: 10px;
             overflow: hidden;
-            width: 300px;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            background-color: #fff;
         }
 
-        .game-card img {
-            display: block;
-            width: 100%;
+        .game-card img.reference-image {
+            width: 90%;
             height: 200px;
+            margin-left: 5%;
+            margin-right: 5%;
+            margin-top: 5%;
             object-fit: cover;
+            border-radius: 10px;
         }
 
         .game-details {
             display: flex;
             align-items: center;
-            justify-content: flex-start;
             padding: 10px;
-            width: 100%;
+            gap: 15px;
         }
 
         .game-avatar {
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
+            width: 60px;
+            height: 60px;
+            border-radius: 10px;
             object-fit: cover;
-            margin-right: 10px;
+            margin-left: 9px;
+        }
+
+        .game-info {
+            flex-grow: 1;
         }
 
         .game-name {
             font-size: 18px;
             font-weight: bold;
             color: #333;
+            margin: 0;
+        }
+
+        .game-meta {
+            font-size: 14px;
+            color: #888;
+            margin: 5px 0;
         }
 
         .nav-bar {
@@ -121,6 +133,7 @@
             <li><a href="#"><i class="ri-settings-line"></i> Settings</a></li>
         </ul>
     </div>
+
     <div class="content">
         <div class="nav-bar">
             @if (Route::has('login'))
@@ -128,9 +141,9 @@
                     @auth
                         <a href="{{ url('/dashboard') }}" class="text-lg font-medium text-black">Dashboard</a>
                     @else
-                        <a href="{{ route('login') }}" class="text-lg font-medium text-black">Log in</a>
+                        <a href="{{ route('player.login') }}" class="text-lg font-medium text-black">Log in</a>
                         @if (Route::has('register'))
-                            <a href="{{ route('register') }}" class="text-lg font-medium text-black">Register</a>
+                            <a href="{{ route('player.register') }}" class="text-lg font-medium text-black">Register</a>
                         @endif
                     @endauth
                 </nav>
@@ -141,34 +154,52 @@
             <section class="bg-gray-100 p-4 rounded-lg shadow-md mt-6">
                 <p>Welcome, <strong>{{ Auth::guard('player')->user()->PlayerName }}</strong>!</p>
                 <p>Your ID: <strong>{{ Auth::guard('player')->user()->PlayerID }}</strong></p>
+                <form action="{{ route('logout') }}" method="POST">
+                    @csrf
+                    @method('DELETE')
+                    <button type="submit"
+                        class="btn btn-danger">Logout</button>
+                </form>
             </section>
         @else
             <p>Please <a href="{{ route('player.login') }}">log in</a> to see your details.</p>
         @endauth
+
         <div class="top-banner">
             <img src="https://via.placeholder.com/800x300" alt="Top Banner">
         </div>
+
         <h2>Top New Releases</h2>
         <div class="new-releases">
             @foreach ($game as $game)
                 <div class="game-card">
-                    <!-- 显示第一张 GameReferenceImages -->
+                    <!-- Make GameReferenceImages clickable -->
                     @if (!empty($game->GameReferenceImages) && is_array($game->GameReferenceImages))
-                        <img src="{{ asset($game->GameReferenceImages[0]) }}" alt="Game Reference Image"
-                            style="width: 100%; height: auto;" />
+                        <a href="{{ route('game.detail', ['game' => $game]) }}">
+                            <img class="reference-image" src="{{ asset($game->GameReferenceImages[0]) }}" alt="Game Reference Image" />
+                        </a>
                     @else
                         <p>No Reference Images</p>
                     @endif
 
-                    <!-- 显示 GameAvatar -->
-                    @if ($game->GameAvatar)
-                        <img src="{{ asset($game->GameAvatar) }}" alt="Game Avatar"
-                            style="width: 100%; height: auto;" />
-                    @else
-                        <p>No Avatar</p>
-                    @endif
+                    <!-- 游戏详细信息 -->
+                    <div class="game-details">
+                        <!-- Make GameAvatar clickable -->
+                        @if ($game->GameAvatar)
+                            <a href="{{ route('game.detail', ['game' => $game]) }}">
+                                <img class="game-avatar" src="{{ asset($game->GameAvatar) }}" alt="Game Avatar" />
+                            </a>
+                        @else
+                            <p>No Avatar</p>
+                        @endif
 
-                    <p>{{ $game->GameName }}</p>
+                        <div class="game-info">
+                            <p class="game-name">{{ $game->GameName }}</p>
+                            <div class="game-meta">
+                                <span class="game-category">{{ $game->GameCategory }}</span>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             @endforeach
         </div>

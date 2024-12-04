@@ -8,6 +8,12 @@ return [
         'passwords' => env('AUTH_PASSWORD_BROKER', 'users'),
     ],
 
+    'login_routes' => [
+        'developer' => 'developer.login',
+        'player' => 'player.login',
+        'staff' => 'staff.login',
+    ],
+
     'guards' => [
         'web' => [
             'driver' => 'session',

@@ -34,8 +34,8 @@
         </div>
 
         <div>
-            <label for="GameDescription">GameDescription</label>
-            <input type="text" name="GameDescription" id="GameDescription" placeholder="Enter Game Description" />
+            <label for="GameDescription">GameDescription</label><br>
+            <textarea name="GameDescription" id="GameDescription" rows="4" placeholder="Write your game description here..."></textarea>
         </div>
 
         <div>

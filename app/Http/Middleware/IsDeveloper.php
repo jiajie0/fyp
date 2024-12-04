@@ -6,22 +6,24 @@ use Closure;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;//？？？
 
 class IsDeveloper
 {
     public function handle(Request $request, Closure $next)
     {
         if (!Auth::guard('developer')->check()) {
-            // 如果未通过开发者守卫认证，则重定向到登录页面
+            Log::info('Developer not authenticated. Redirecting to login.');
             return redirect()->route('developer.login')->withErrors('Access denied.');
         }
 
         if (!(Auth::guard('developer')->user() instanceof \App\Models\Developer)) {
-            // 如果通过认证但不是 Developer 模型，登出并拒绝访问
+            Log::warning('Authenticated user is not a Developer. Logging out.');
             Auth::guard('developer')->logout();
             return redirect()->route('developer.login')->withErrors('Access denied.');
         }
 
+        Log::info('Developer authenticated. Proceeding to next middleware.');
         return $next($request);
     }
 }

@@ -16,12 +16,18 @@ class GameController extends Controller
 {
     public function index()
     {
+        if (!Auth::guard('developer')->check()) {
+            return redirect()->route('developer.login')->withErrors('Please log in as a developer.');
+        }
         $game = Game::all();
         return view('game.index', ['game' => $game]);
 
     }
     public function create()
     {
+        if (!Auth::guard('developer')->check()) {
+            return redirect()->route('developer.login')->withErrors('Please log in as a developer.');
+        }
         $developerID = Auth::guard('developer')->user()->DeveloperID;
         return view('game.create', compact('developerID'));
     }
@@ -85,6 +91,9 @@ class GameController extends Controller
 
     public function edit(Game $game)
     {
+        if (!Auth::guard('developer')->check()) {
+            return redirect()->route('developer.login')->withErrors('Please log in as a developer.');
+        }
         //dd($game); dump and die
         return view('game.edit', ['game' => $game]);
     }
@@ -162,7 +171,7 @@ class GameController extends Controller
 
     public function showWelcomePage()
     {
-        $game = Game::select('GameID', 'GameName', 'GameAvatar', 'GameReferenceImages')->get();
+        $game = Game::select('GameID', 'GameName', 'GameAvatar', 'GameReferenceImages','GameCategory')->get();
         return view('welcome', ['game' => $game]);
     }
 
