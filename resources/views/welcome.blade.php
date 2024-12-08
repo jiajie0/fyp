@@ -64,8 +64,8 @@
         }
 
         .game-card {
-            width: 375px;
-            margin: 20px;
+            width: 400px;
+            margin: 5px;
             border: 1px solid #ddd;
             border-radius: 10px;
             overflow: hidden;

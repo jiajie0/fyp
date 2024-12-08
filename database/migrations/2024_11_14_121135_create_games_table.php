@@ -21,7 +21,7 @@ return new class extends Migration
             $table->text('GameDescription');
             $table->string('GameCategory');
             $table->date('GameUploadDate')->default(DB::raw('CURRENT_DATE'));
-            $table->decimal('RatingScore', 4, 2)->default(0); // 将 float 替换为 decimal，以提高精度
+            $table->integer('RatingScore')->default(0); 
             $table->decimal('GamePrice', 8, 2)->default(0);
             $table->integer('GameAchievementsCount')->default(0);
             $table->string('GameAvatar')->nullable();

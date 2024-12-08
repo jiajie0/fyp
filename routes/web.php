@@ -8,10 +8,18 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\GameController;
 use App\Http\Controllers\GameStoreController;
 use App\Http\Controllers\RatingController;
+use App\Http\Controllers\EventController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Middleware\IsPlayer;
 use App\Http\Middleware\IsDeveloper;
 use App\Http\Middleware\IsStaff;
+
+Route::post('/update-player-score', [PlayerController::class, 'updatePlayerScore']);
+
+
+//testing button
+Route::post('/games/{gameId}/add-hour', [GameStoreController::class, 'addPlayTime'])->name('game.addHour');
+Route::post('/game-store/{gameId}/add-achievement', [GameStoreController::class, 'addAchievementsCount'])->name('game-store.add-achievement');
 
 
 Route::get('/', [GameController::class, 'showWelcomePage'])->name('welcome');
@@ -69,6 +77,14 @@ Route::post('/game', [GameController::class, 'store'])->name('game.store');
 Route::get('/game/{game}/edit', [GameController::class, 'edit'])->name('game.edit');
 Route::put('/game/{game}/update', [GameController::class, 'update'])->name('game.update');
 Route::delete('/game/{game}/delete', [GameController::class, 'delete'])->name('game.delete');
+
+// event CRUD
+Route::get('/event', [EventController::class, 'index'])->name('event.index');
+Route::get('/event/create', [EventController::class, 'create'])->name('event.create');
+Route::post('/event', [EventController::class, 'store'])->name('event.store');
+Route::get('/event/{event}/edit', [EventController::class, 'edit'])->name('event.edit');
+Route::put('/event/{event}/update', [EventController::class, 'update'])->name('event.update');
+Route::delete('/event/{event}/delete', [EventController::class, 'delete'])->name('event.delete');
 
 Route::middleware(['auth:developer', IsDeveloper::class])->group(function () {
     Route::get('/developer-home', [DeveloperController::class, 'home'])->name('developer.home');

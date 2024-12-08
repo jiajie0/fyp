@@ -19,6 +19,7 @@ return new class extends Migration
             $table->integer('TotalPlayTime')->default(0);
             $table->integer('TotalLikeReceived')->default(0);
             $table->integer('PlayerScore')->default(0);
+            $table->integer('PlayerLevel')->default(1);
             $table->string('PlayerEmail')->unique();
             $table->timestamps();
         });

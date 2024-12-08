@@ -21,6 +21,7 @@ return new class extends Migration
             $table->foreign('GameID')->references('GameID')->on('games')->onDelete('cascade');
 
             $table->boolean('RatingMark');  // 用于存储 true 或 false (recommended,not_recommended)
+            $table->integer('RatingWeight')->default(0); // 动态权重(0,1,3,10,30)
             $table->text('RatingText')->nullable();
             $table->string('RatingImageURL')->nullable();
             $table->string('RatingVideoURL')->nullable();

@@ -4,8 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration
-{
+return new class extends Migration {
     /**
      * Run the migrations.
      */
@@ -18,10 +17,12 @@ return new class extends Migration
             $table->foreign('PlayerID')->references('PlayerID')->on('players')->onDelete('cascade');
             $table->foreign('GameID')->references('GameID')->on('games')->onDelete('cascade');
 
-            $table->integer('GameAchievementsCount');
-            $table->integer('PlayerAchievementsCount');
+            $table->integer('GameAchievementsCount')->default(0);
+            $table->integer('PlayerAchievementsCount')->default(0);
             $table->integer('TotalPlayTime')->default(0);
             $table->primary(['PlayerID', 'GameID']);
+            $table->boolean('Has50PercentScore')->default(0);
+            $table->boolean('Has80PercentScore')->default(0);
             $table->timestamps();
         });
     }

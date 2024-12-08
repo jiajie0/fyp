@@ -12,7 +12,8 @@
     @auth('player')
         <section class="bg-gray-100 p-4 rounded-lg shadow-md mt-6">
             <p>Welcome, <strong>{{ Auth::guard('player')->user()->PlayerName }}</strong>!</p>
-            <p>Your ID: <strong>{{ Auth::guard('player')->user()->PlayerID }}</strong></p>
+            <p>Your Level: <strong>{{ Auth::guard('player')->user()->PlayerLevel }}</strong></p>
+            <p>Your Score: <strong>{{ Auth::guard('player')->user()->PlayerScore }}</strong></p>
         </section>
 
         <h1>Your Games</h1>
@@ -36,28 +37,42 @@
                     <th>TotalPlayTime</th>
                     <th>Delete</th>
                 </tr>
-                @foreach ($game_store as $game_store_item)
+                @foreach ($game_store as $game_store)
                     <tr>
-                        <td>{{ $game_store_item->PlayerID }}</td>
+                        <td>{{ $game_store->PlayerID }}</td>
                         <td>
-                            @if ($game_store_item->game->GameAvatar)
-                                <img src="{{ asset( $game_store_item->game->GameAvatar) }}" alt="Game Avatar" style="width: 50px; height: 50px;">
+                            @if ($game_store->game->GameAvatar)
+                                <img src="{{ asset($game_store->game->GameAvatar) }}" alt="Game Avatar"
+                                    style="width: 50px; height: 50px;">
                             @else
                                 No Avatar
                             @endif
                         </td>
-                        <td>{{ $game_store_item->GameID }}</td>
-                        <td>{{ $game_store_item->game->GameName }}</td>
-                        <td>{{ $game_store_item->game->GameCategory }}</td>
-                        <td>{{ $game_store_item->GameAchievementsCount }}</td>
-                        <td>{{ $game_store_item->PlayerAchievementsCount }}</td>
-                        <td>{{ $game_store_item->TotalPlayTime }}</td>
+                        <td>{{ $game_store->GameID }}</td>
+                        <td>{{ $game_store->game->GameName }}</td>
+                        <td>{{ $game_store->game->GameCategory }}</td>
+                        <td>{{ $game_store->GameAchievementsCount }}</td>
+                        <td>{{ $game_store->PlayerAchievementsCount }}</td>
+                        <td>{{ $game_store->TotalPlayTime }}</td>
                         <td>
                             <form method="post"
-                                action="{{ route('game_store.delete', ['playerID' => $game_store_item->PlayerID, 'gameID' => $game_store_item->GameID]) }}">
+                                action="{{ route('game_store.delete', ['playerID' => $game_store->PlayerID, 'gameID' => $game_store->GameID]) }}">
                                 @csrf
                                 @method('delete')
                                 <input type="submit" value="Delete" />
+                            </form>
+                        </td>
+                        <td>
+                            <form action="{{ route('game.addHour', ['gameId' => $game_store->GameID]) }}" method="POST"
+                                style="display: inline;">
+                                @csrf
+                                <button type="submit" class="btn btn-primary">Add 1 Hour</button>
+                            </form>
+                        </td>
+                        <td>
+                            <form action="{{ route('game-store.add-achievement', ['gameId' => $game_store->GameID]) }}" method="POST">
+                                @csrf
+                                <button type="submit" class="btn btn-primary">Add 1 Achievement</button>
                             </form>
                         </td>
                     </tr>

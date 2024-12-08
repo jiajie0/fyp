@@ -41,4 +41,11 @@ class GameStore extends Model
         return $this->belongsTo(Game::class, 'GameID', 'GameID');
     }
 
+    //Laravel 无法直接处理复合主键，你需要覆盖模型的方法来手动管理保存和更新逻辑。
+    protected function setKeysForSaveQuery($query)
+    {
+        return $query->where('PlayerID', $this->getAttribute('PlayerID'))
+            ->where('GameID', $this->getAttribute('GameID'));
+    }
+
 }

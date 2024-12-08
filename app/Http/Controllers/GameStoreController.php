@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\GameStore;  //import model
 use App\Models\Developer;
+use App\Models\Game;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
@@ -70,16 +71,102 @@ class GameStoreController extends Controller
             return redirect()->back()->with('error', 'This game is already in your store!');
         }
 
+        // 获取游戏的 GameAchievementsCount
+        $game = Game::find($gameID);
+        if (!$game) {
+            return redirect()->back()->with('error', 'Game not found!');
+        }
+        $gameAchievementsCount = $game->GameAchievementsCount;
+
         // 添加到游戏商店
         GameStore::create([
             'PlayerID' => $playerID,
             'GameID' => $gameID,
-            'GameAchievementsCount' => 0,
+            'GameAchievementsCount' => $gameAchievementsCount,
             'PlayerAchievementsCount' => 0,
             'TotalPlayTime' => 0,
         ]);
 
         return redirect()->back()->with('success', 'Game added to your store successfully!');
     }
+
+    public function addPlayTime(Request $request, $gameId)
+    {
+        // 获取当前登录玩家
+        $player = Auth::guard('player')->user();
+
+        if (!$player) {
+            return response()->json(['message' => 'Unauthorized'], 401);
+        }
+
+        // 调用 Player 模型中的 addPlayTimeScore 方法
+        $updateResult = $player->addPlayTimeScore($gameId, 1); // 增加 1 小时游玩时间
+
+        if (!$updateResult) {
+            return redirect()->back()->with('error', 'Game not found or not in your store.');
+        }
+
+        return redirect()->back()->with('success', 'Play time and score updated successfully.');
+    }
+
+    // public function addAchievementsCount(Request $request, $gameId)
+    // {
+    //     // 获取当前登录玩家
+    //     $player = Auth::guard('player')->user();
+
+    //     if (!$player) {
+    //         return response()->json(['message' => 'Unauthorized'], 401);
+    //     }
+
+    //     // 查找玩家与游戏的中间表记录
+    //     $gameStore = $player->games()->where('game_store.GameID', $gameId)->first();
+
+    //     if (!$gameStore) {
+    //         return redirect()->back()->with('error', 'Game not found or not in your store.');
+    //     }
+
+    //     // 增加 PlayerAchievementsCount
+    //     $currentAchievementsCount = $gameStore->pivot->PlayerAchievementsCount;
+    //     $player->games()->updateExistingPivot($gameId, [
+    //         'PlayerAchievementsCount' => $currentAchievementsCount + 1,
+    //     ]);
+
+    //     // 更新分数逻辑
+    //     $player->updateScoreForAchievements($gameId);
+
+    //     return redirect()->back()->with('success', 'Achievements count and score updated successfully.');
+    // }
+
+    public function addAchievementsCount(Request $request, $gameId)
+    {
+        // 获取当前登录玩家
+        $player = Auth::guard('player')->user();
+
+        if (!$player) {
+            return response()->json(['message' => 'Unauthorized'], 401);
+        }
+
+        // 查找玩家与游戏的中间表记录
+        $gameStore = $player->games()->where('game_store.GameID', $gameId)->first();
+
+        if (!$gameStore) {
+            return redirect()->back()->with('error', 'Game not found or not in your store.');
+        }
+
+        // 增加 PlayerAchievementsCount
+        $currentAchievementsCount = $gameStore->pivot->PlayerAchievementsCount;
+        $player->games()->updateExistingPivot($gameId, [
+            'PlayerAchievementsCount' => $currentAchievementsCount + 1,
+        ]);
+
+        // 重新加载数据以确保数据最新
+        $gameStore = $player->games()->where('game_store.GameID', $gameId)->first();
+
+        // 更新分数逻辑
+        $player->updateScoreForAchievements($gameId);
+
+        return redirect()->back()->with('success', 'Achievements count and score updated successfully.');
+    }
+
 
 }

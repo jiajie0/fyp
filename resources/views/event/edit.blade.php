@@ -5,14 +5,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Edit Game</title>
+    <title>Edit Event</title>
 </head>
 
 <body>
-    <h1>Edit a Game</h1>
+    <h1>Edit a Event</h1>
 
     <div>
-        @if ($errors->any()) <!-- List out errors the user makes -->
+        @if($errors->any()) <!-- List out errors the user makes -->
             <ul>
                 @foreach ($errors->all() as $error)
                     <li>{{ $error }}</li>
@@ -21,53 +21,27 @@
         @endif
     </div>
 
-    <form method="post" action="{{ route('game.update', ['game' => $game]) }}" enctype="multipart/form-data">
+    <form method="post" action="{{ route('event.update', ['event' => $event]) }}" enctype="multipart/form-data">
         @csrf <!-- For security purposes -->
         @method('put') <!-- Indicating this is a PUT request for updating data -->
 
-        <input type="hidden" name="DeveloperID" value="{{ $developerID }}">
-
+        <input type="hidden" name="StaffID" value="{{ $staffID }}" />
         <div>
-            <label for="GameName">Game Name</label>
-            <input type="text" name="GameName" id="GameName" placeholder="Enter Game Name"
-                value="{{ $game->GameName }}" />
+            <label for="EventName">Event Name</label>
+            <input type="text" name="EventName" id="EventName" placeholder="Enter Event Name" value="{{ $event->EventName }}" />
         </div>
 
+        <!-- EventImageURL upload field -->
         <div>
-            <label for="GameDescription">Game Description</label>
-            <input type="text" name="GameDescription" id="GameDescription" placeholder="Enter Game Description"
-                value="{{ $game->GameDescription }}" />
+            <label for="EventImageURL">Event Image</label>
+            <input type="file" name="EventImageURL" id="EventImageURL" accept="image/*" onchange="previewImage(event)" />
         </div>
 
-        <div>
-            <label for="GameCategory">Game Category</label>
-            <input type="text" name="GameCategory" id="GameCategory" placeholder="Enter Game Category"
-                value="{{ $game->GameCategory }}" />
-        </div>
-
-        <div>
-            <label for="GamePrice">Game Price</label>
-            <input type="text" name="GamePrice" id="GamePrice" placeholder="Enter Game Price"
-                value="{{ $game->GamePrice }}" />
-        </div>
-
-        <div>
-            <label for="GameAchievementsCount">Game Achievements Count</label>
-            <input type="text" name="GameAchievementsCount" id="GameAchievementsCount"
-                placeholder="Enter Achievements Count" value="{{ $game->GameAchievementsCount }}" />
-        </div>
-
-        <!-- GameAvatar upload field -->
-        <div>
-            <label for="GameAvatar">Game Avatar</label>
-            <input type="file" name="GameAvatar" id="GameAvatar" accept="image/*" onchange="previewImage(event)" />
-        </div>
-
-        <!-- Display current avatar if exists -->
-        @if ($game->GameAvatar)
+        <!-- Display current EventImageURL if exists -->
+        @if($event->EventImageURL)
             <div>
-                <p>Current Avatar:</p>
-                <img src="{{ asset($game->GameAvatar) }}" alt="{{ $game->GameName }}" style="max-width: 100px; max-height: 100px; margin: 5px;">
+                <p>Current Image:</p>
+                <img src="{{ asset($event->EventImageURL) }}" alt="{{ $event->EventName }}" style="max-width: 300px;">
             </div>
         @endif
 
@@ -78,17 +52,9 @@
         </div>
 
         <div>
-            <label for="GameReferenceImages">Game Reference Images (up to 10)</label>
-            <input type="file" name="GameReferenceImages[]" id="GameReferenceImages" accept="image/*" multiple
+            <label for="EventReferenceImages">Event Reference Images (up to 10)</label>
+            <input type="file" name="EventReferenceImages[]" id="EventReferenceImages" accept="image/*" multiple
                 onchange="previewMultipleImages(event)" />
-        </div>
-
-        <div id="currentReferenceImages" style="display: flex; gap: 10px; flex-wrap: wrap;">
-            <p>Current Reference Images:</p>
-            @foreach ($game->GameReferenceImages as $image)
-                <img src="{{ asset($image) }}" alt="Reference Image"
-                    style="max-width: 100px; max-height: 100px; margin: 5px;">
-            @endforeach
         </div>
 
         <div id="referenceImagesPreview" style="display: flex; gap: 10px; flex-wrap: wrap;">
@@ -96,7 +62,7 @@
         </div>
 
         <div>
-            <input type="submit" value="Update Game">
+            <input type="submit" value="Update Event">
         </div>
     </form>
 

@@ -36,8 +36,8 @@ class Event extends Model
                 $newIdNumber = 1; // 没有记录，从 1 开始
             }
 
-            // 生成新 EventID，格式为 "SF" + 补零后的数字
-            $event->EventID = 'SF' . str_pad($newIdNumber, 10, '0', STR_PAD_LEFT);
+            // 生成新 EventID，格式为 "EV" + 补零后的数字
+            $event->EventID = 'EV' . str_pad($newIdNumber, 10, '0', STR_PAD_LEFT);
         }
     });
 }

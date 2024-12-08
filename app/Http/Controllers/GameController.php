@@ -94,8 +94,10 @@ class GameController extends Controller
         if (!Auth::guard('developer')->check()) {
             return redirect()->route('developer.login')->withErrors('Please log in as a developer.');
         }
+
+        $developerID = Auth::guard('developer')->user()->DeveloperID;
         //dd($game); dump and die
-        return view('game.edit', ['game' => $game]);
+        return view('game.edit', ['game' => $game, 'developerID' => $developerID]);
     }
 
     public function update(Game $game, Request $request)
@@ -171,7 +173,7 @@ class GameController extends Controller
 
     public function showWelcomePage()
     {
-        $game = Game::select('GameID', 'GameName', 'GameAvatar', 'GameReferenceImages','GameCategory')->get();
+        $game = Game::select('GameID', 'GameName', 'GameAvatar', 'GameReferenceImages', 'GameCategory')->get();
         return view('welcome', ['game' => $game]);
     }
 
