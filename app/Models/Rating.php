@@ -63,4 +63,12 @@ class Rating extends Model
     {
         return $this->belongsTo(Game::class, 'GameID', 'GameID');
     }
+
+    public function likes()
+    {
+        return $this->hasMany(RatingLike::class, 'RatingID', 'RatingID');
+    }
+
+
+
 }

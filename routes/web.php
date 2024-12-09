@@ -29,6 +29,7 @@ Route::post('/game/{gameID}/rate', [RatingController::class, 'store'])->name('ga
 Route::get('/rating/{ratingID}/edit', [RatingController::class, 'edit'])->name('game.editRating');
 Route::put('/rating/{ratingID}/update', [RatingController::class, 'update'])->name('game.updateRating');
 Route::delete('/rating/{ratingID}/delete', [RatingController::class, 'destroy'])->name('game.deleteRating');
+Route::post('/ratings/{rating}/like', [RatingController::class, 'like'])->name('ratings.like');
 
 Route::get('/player-login', [AuthController::class, 'showPlayerLogin'])->name('player.login');
 Route::post('/player-login', [AuthController::class, 'playerLogin']);

@@ -123,7 +123,7 @@ class Player extends Model implements Authenticatable
         if (!$gameStore) {
             return false; // 玩家尚未游玩此游戏
         }
-
+        $gameStore = $this->games()->where('game_store.GameID', $gameId)->first();
         // 通过 pivot 属性获取中间表中的最新数据
         $playerAchievements = $gameStore->pivot->PlayerAchievementsCount;
         $gameAchievements = $gameStore->pivot->GameAchievementsCount;

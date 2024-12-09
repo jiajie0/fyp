@@ -137,7 +137,7 @@
         @auth('player')
             <section class="bg-gray-100 p-4 rounded-lg shadow-md mt-6">
                 <p>Welcome, <strong>{{ Auth::guard('player')->user()->PlayerName }}</strong>!</p>
-                <p>Your ID: <strong>{{ Auth::guard('player')->user()->PlayerID }}</strong></p>
+                <p>Your ID: <strong>{{ Auth::guard('player')->user()->PlayerScore }}</strong></p>
             </section>
         @else
             <p>Please <a href="{{ route('player.login') }}">log in</a> to see your details.</p>
@@ -196,8 +196,6 @@
                             <p class="text-muted">Rated on
                                 {{ \Carbon\Carbon::parse($playerRating->RatingTime)->format('Y-m-d H:i:s') }}</p>
                             <div>
-                                <a href="{{ route('game.editRating', $playerRating->RatingID) }}"
-                                    class="btn btn-secondary">Edit</a>
                                 <form action="{{ route('game.deleteRating', $playerRating->RatingID) }}" method="POST"
                                     style="display:inline;">
                                     @csrf
@@ -251,8 +249,18 @@
                             <p><em>{{ $rating->RatingText }}</em></p>
                             <p class="text-muted">Rated on
                                 {{ \Carbon\Carbon::parse($rating->RatingTime)->format('Y-m-d H:i:s') }}</p>
+                            <p>Total Likes: {{ $rating->TotalLikeReceived }}</p>
+                            <form action="{{ route('ratings.like', $rating->RatingID) }}" method="POST">
+                                @csrf
+                                @if ($rating->likes->where('PlayerID', Auth::guard('player')->user()->PlayerID)->isEmpty())
+                                    <button type="submit" class="btn btn-primary">Like</button>
+                                @else
+                                    <button type="button" class="btn btn-secondary" disabled>Liked</button>
+                                @endif
+                            </form>
                         </div>
                     @endforeach
+
                 @endif
             </section>
         </div>

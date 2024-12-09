@@ -42,9 +42,10 @@
             margin-right: 10px;
         }
 
-        .home-icon {
-            color: yellow;
+        .sidebar ul li a:hover {
+            color: #f39c12;
         }
+        
 
         .content {
             flex-grow: 1;
@@ -153,7 +154,6 @@
         @auth('player')
             <section class="bg-gray-100 p-4 rounded-lg shadow-md mt-6">
                 <p>Welcome, <strong>{{ Auth::guard('player')->user()->PlayerName }}</strong>!</p>
-                <p>Your ID: <strong>{{ Auth::guard('player')->user()->PlayerID }}</strong></p>
                 <form action="{{ route('logout') }}" method="POST">
                     @csrf
                     @method('DELETE')

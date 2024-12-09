@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;  //生成一个更长、更随机的字符串，从而避免文件名冲突：
 
 
+
 class GameController extends Controller
 {
     public function index()
