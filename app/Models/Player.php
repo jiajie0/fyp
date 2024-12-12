@@ -38,6 +38,15 @@ class Player extends Model implements Authenticatable
                 $player->PlayerID = 'PY' . str_pad($newIdNumber, 10, '0', STR_PAD_LEFT);
             }
         });
+
+        // 更新时同步关联的 Rating 表中的 PlayerLevel
+        static::updated(function ($player) {
+            if ($player->isDirty('PlayerLevel')) {
+                // 如果 PlayerLevel 发生变化，更新关联的 Rating 表
+                Rating::where('PlayerID', $player->PlayerID)
+                    ->update(['PlayerLevel' => $player->PlayerLevel]);
+            }
+        });
     }
 
     protected $fillable = [
@@ -50,6 +59,8 @@ class Player extends Model implements Authenticatable
         'PlayerScore',
         'PlayerEmail',
     ];
+
+
 
     // one player can have many post
     public function posts()

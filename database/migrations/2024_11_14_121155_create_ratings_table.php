@@ -27,6 +27,7 @@ return new class extends Migration
             $table->string('RatingVideoURL')->nullable();
             $table->timestamp('RatingTime');
             $table->integer('TotalLikeReceived')->default(0);
+            $table->integer('PlayerLevel')->default(1);
             $table->timestamps();
         });
     }

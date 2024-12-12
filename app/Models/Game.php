@@ -16,8 +16,9 @@ class Game extends Model
     protected $keyType = 'string';
     protected $casts = [
         'GameReferenceImages' => 'array', // 自动处理 JSON 字段为数组
+        'GameCategory' => 'array',
     ];
-    
+
 
     use HasFactory;
 
@@ -54,7 +55,8 @@ class Game extends Model
         'GamePrice',
         'GameAchievementsCount',
         'GameAvatar',
-        'GameReferenceImages'
+        'GameReferenceImages',
+        'RatingScore',
     ];
 
     // 游戏与开发者之间的关系：一个开发者可以开发多个游戏

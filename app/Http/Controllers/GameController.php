@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\Game;  //import model
 use App\Models\Developer;
 use App\Models\Rating;
+use App\Models\Event;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
@@ -38,7 +39,7 @@ class GameController extends Controller
             'DeveloperID' => 'required|exists:developers,DeveloperID',
             'GameName' => 'required|string|max:255',
             'GameDescription' => 'nullable|string',
-            'GameCategory' => 'required|string|max:255',
+            'GameCategory' => 'required|array|min:1|max:3',
             'GamePrice' => 'required|numeric|min:0',
             'GameAchievementsCount' => 'nullable|integer|min:0',
             'GameAvatar' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
@@ -83,6 +84,9 @@ class GameController extends Controller
         // 如果 GameDescription 为 null, 设置为空字符串
         $data['GameDescription'] = $data['GameDescription'] ?? '';
 
+        // 存储 GameCategory 为 JSON 格式
+        $data['GameCategory'] = json_encode($data['GameCategory']);
+
         // 创建新的游戏记录
         $newGame = Game::create($data);
 
@@ -107,7 +111,7 @@ class GameController extends Controller
             'DeveloperID' => 'required|exists:developers,DeveloperID',  // 验证 DeveloperID 是否存在于开发者表中
             'GameName' => 'required|string|max:255',
             'GameDescription' => 'nullable|string',
-            'GameCategory' => 'required|string|max:255',
+            'GameCategory' => 'required|array|min:1|max:3',
             'GamePrice' => 'required|numeric|min:0',
             'GameAchievementsCount' => 'nullable|integer|min:0',
             'GameAvatar' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
@@ -152,6 +156,9 @@ class GameController extends Controller
             $data['GameReferenceImages'] = $referenceImages; // 存储路径集合
         }
 
+        // 存储 GameCategory 为 JSON 格式
+        $data['GameCategory'] = json_encode($data['GameCategory']);
+
 
         $game->update($data);
 
@@ -174,8 +181,14 @@ class GameController extends Controller
 
     public function showWelcomePage()
     {
-        $game = Game::select('GameID', 'GameName', 'GameAvatar', 'GameReferenceImages', 'GameCategory')->get();
-        return view('welcome', ['game' => $game]);
+        $events = Event::all();
+        $games = Game::all();
+
+        // Pass the data to the view
+        return view('welcome', [
+            'event' => $events,
+            'game' => $games,
+        ]);
     }
 
     public function showGameDetails(Game $game)
@@ -196,12 +209,37 @@ class GameController extends Controller
             $playerRating = $ratings->firstWhere('PlayerID', $playerID);
         }
 
+        // 统计数据
+        $ratingStats = [];
+        foreach (range(1, 5) as $level) {
+            $ratingStats["level_{$level}_mark_1"] = Rating::where('GameID', $game->GameID)
+                ->where('PlayerLevel', $level)
+                ->where('RatingMark', 1)
+                ->count();
+
+            $ratingStats["level_{$level}_mark_0"] = Rating::where('GameID', $game->GameID)
+                ->where('PlayerLevel', $level)
+                ->where('RatingMark', 0)
+                ->count();
+        }
+
+        $totalMark1 = Rating::where('GameID', $game->GameID)->where('RatingMark', 1)->count();
+        $totalMark0 = Rating::where('GameID', $game->GameID)->where('RatingMark', 0)->count();
+
+
+        // 获取事件数据
+        $event = Event::all();
+
         // 将数据传递到视图
         return view('game.detail', [
             'game' => $game,
             'developerName' => $developerName,
             'ratings' => $ratings,
             'playerRating' => $playerRating, // 当前玩家的评论（如果存在）
+            'event' => $event,
+            'ratingStats' => $ratingStats,
+            'totalMark1' => $totalMark1,
+            'totalMark0' => $totalMark0,
         ]);
     }
 

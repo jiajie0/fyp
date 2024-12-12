@@ -35,15 +35,43 @@
 
         <div>
             <label for="GameDescription">Game Description</label>
-            <input type="text" name="GameDescription" id="GameDescription" placeholder="Enter Game Description"
-                value="{{ $game->GameDescription }}" />
+            <textarea name="GameDescription" id="GameDescription" placeholder="Enter Game Description" rows="4" cols="50">{{ nl2br(e($game->GameDescription)) }}</textarea>
         </div>
 
         <div>
-            <label for="GameCategory">Game Category</label>
-            <input type="text" name="GameCategory" id="GameCategory" placeholder="Enter Game Category"
-                value="{{ $game->GameCategory }}" />
+            <input type="checkbox" name="GameCategory[]" value="Action" id="Action"
+                {{ in_array('Action', json_decode(old('GameCategory', $game->GameCategory ?? '[]'))) ? 'checked' : '' }}>
+            <label for="Action">Action</label>
+
+            <input type="checkbox" name="GameCategory[]" value="Role-Playing Game" id="RolePlayingGame"
+                {{ in_array('Role-Playing Game', json_decode(old('GameCategory', $game->GameCategory ?? '[]'))) ? 'checked' : '' }}>
+            <label for="RolePlayingGame">Role-Playing Game</label>
+
+            <input type="checkbox" name="GameCategory[]" value="Strategy" id="Strategy"
+                {{ in_array('Strategy', json_decode(old('GameCategory', $game->GameCategory ?? '[]'))) ? 'checked' : '' }}>
+            <label for="Strategy">Strategy</label>
+
+            <input type="checkbox" name="GameCategory[]" value="Sports & Racing" id="SportsRacing"
+                {{ in_array('Sports & Racing', json_decode(old('GameCategory', $game->GameCategory ?? '[]'))) ? 'checked' : '' }}>
+            <label for="SportsRacing">Sports & Racing</label>
+
+            <input type="checkbox" name="GameCategory[]" value="Adventure" id="Adventure"
+                {{ in_array('Adventure', json_decode(old('GameCategory', $game->GameCategory ?? '[]'))) ? 'checked' : '' }}>
+            <label for="Adventure">Adventure</label>
+
+            <input type="checkbox" name="GameCategory[]" value="Casual & Puzzle Games" id="CasualPuzzleGames"
+                {{ in_array('Casual & Puzzle Games', json_decode(old('GameCategory', $game->GameCategory ?? '[]'))) ? 'checked' : '' }}>
+            <label for="CasualPuzzleGames">Casual & Puzzle Games</label>
+
+            <input type="checkbox" name="GameCategory[]" value="Multiplayer Online" id="MultiplayerOnline"
+                {{ in_array('Multiplayer Online', json_decode(old('GameCategory', $game->GameCategory ?? '[]'))) ? 'checked' : '' }}>
+            <label for="MultiplayerOnline">Multiplayer Online</label>
+
+            <input type="checkbox" name="GameCategory[]" value="Experimental Game" id="ExperimentalGame"
+                {{ in_array('Experimental Game', json_decode(old('GameCategory', $game->GameCategory ?? '[]'))) ? 'checked' : '' }}>
+            <label for="ExperimentalGame">Experimental Game</label>
         </div>
+
 
         <div>
             <label for="GamePrice">Game Price</label>
@@ -67,7 +95,8 @@
         @if ($game->GameAvatar)
             <div>
                 <p>Current Avatar:</p>
-                <img src="{{ asset($game->GameAvatar) }}" alt="{{ $game->GameName }}" style="max-width: 100px; max-height: 100px; margin: 5px;">
+                <img src="{{ asset($game->GameAvatar) }}" alt="{{ $game->GameName }}"
+                    style="max-width: 100px; max-height: 100px; margin: 5px;">
             </div>
         @endif
 
@@ -85,7 +114,7 @@
 
         <div id="currentReferenceImages" style="display: flex; gap: 10px; flex-wrap: wrap;">
             <p>Current Reference Images:</p>
-            @foreach ($game->GameReferenceImages as $image)
+            @foreach ($game->GameReferenceImages ?? [] as $image)
                 <img src="{{ asset($image) }}" alt="Reference Image"
                     style="max-width: 100px; max-height: 100px; margin: 5px;">
             @endforeach

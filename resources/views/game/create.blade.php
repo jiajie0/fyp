@@ -39,9 +39,42 @@
         </div>
 
         <div>
-            <label for="GameCategory">GameCategory</label>
-            <input type="text" name="GameCategory" id="GameCategory" placeholder="Enter Game Category" />
+            <label>Game Category</label><br>
+            <div>
+                <input type="checkbox" name="GameCategory[]" value="Action" id="Action">
+                <label for="Action">Action</label>
+            </div>
+            <div>
+                <input type="checkbox" name="GameCategory[]" value="Role-Playing Game" id="RolePlayingGame">
+                <label for="RolePlayingGame">Role-Playing Game</label>
+            </div>
+            <div>
+                <input type="checkbox" name="GameCategory[]" value="Strategy" id="Strategy">
+                <label for="Strategy">Strategy</label>
+            </div>
+            <div>
+                <input type="checkbox" name="GameCategory[]" value="Sports & Racing" id="SportsRacing">
+                <label for="SportsRacing">Sports & Racing</label>
+            </div>
+            <div>
+                <input type="checkbox" name="GameCategory[]" value="Adventure" id="Adventure">
+                <label for="Adventure">Adventure</label>
+            </div>
+            <div>
+                <input type="checkbox" name="GameCategory[]" value="Casual & Puzzle Games" id="CasualPuzzleGames">
+                <label for="CasualPuzzleGames">Casual & Puzzle Games</label>
+            </div>
+            <div>
+                <input type="checkbox" name="GameCategory[]" value="Multiplayer Online" id="MultiplayerOnline">
+                <label for="MultiplayerOnline">Multiplayer Online</label>
+            </div>
+            <div>
+                <input type="checkbox" name="GameCategory[]" value="Experimental Game" id="ExperimentalGame">
+                <label for="ExperimentalGame">Experimental Game</label>
+            </div>
         </div>
+
+ 
 
         <div>
             <label for="GamePrice">GamePrice</label>

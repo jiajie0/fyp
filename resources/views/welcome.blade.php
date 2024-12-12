@@ -15,11 +15,10 @@
         }
 
         .sidebar {
-            width: 200px;
+            width: 150px;
             background-color: #f4f4f4;
             padding: 20px;
-            height: 100%
-            box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+            height: 100% box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
         }
 
         .sidebar ul {
@@ -45,7 +44,7 @@
         .sidebar ul li a:hover {
             color: #f39c12;
         }
-        
+
 
         .content {
             flex-grow: 1;
@@ -53,7 +52,9 @@
         }
 
         .top-banner img {
-            width: 90%;
+            width: 100%;
+            max-width: 800px;
+            height: auto;
             border-radius: 10px;
         }
 
@@ -116,6 +117,16 @@
             margin: 5px 0;
         }
 
+        .game-category {
+            display: inline-block;
+            padding: 5px 5px;
+            background-color: #f0f0f0;
+            margin-right: 2px;
+            margin-bottom: 5px;
+            border-radius: 10px;
+        }
+
+
         .nav-bar {
             margin-bottom: 20px;
         }
@@ -157,8 +168,7 @@
                 <form action="{{ route('logout') }}" method="POST">
                     @csrf
                     @method('DELETE')
-                    <button type="submit"
-                        class="btn btn-danger">Logout</button>
+                    <button type="submit" class="btn btn-danger">Logout</button>
                 </form>
             </section>
         @else
@@ -166,7 +176,12 @@
         @endauth
 
         <div class="top-banner">
-            <img src="https://via.placeholder.com/800x300" alt="Top Banner">
+            <div id="carousel" class="carousel">
+                @foreach ($event as $event)
+                    <img class="carousel-image" src="{{ asset($event->EventImageURL) }}" alt="{{ $event->EventName }}"
+                        style="display: none;">
+                @endforeach
+            </div>
         </div>
 
         <h2>Top New Releases</h2>
@@ -176,10 +191,13 @@
                     <!-- Make GameReferenceImages clickable -->
                     @if (!empty($game->GameReferenceImages) && is_array($game->GameReferenceImages))
                         <a href="{{ route('game.detail', ['game' => $game]) }}">
-                            <img class="reference-image" src="{{ asset($game->GameReferenceImages[0]) }}" alt="Game Reference Image" />
+                            <img class="reference-image" src="{{ asset($game->GameReferenceImages[0]) }}"
+                                alt="Game Reference Image" />
                         </a>
                     @else
-                        <p>No Reference Images</p>
+                        <a href="{{ route('game.detail', ['game' => $game]) }}">
+                            <img src="https://via.placeholder.com/400x200" alt="Game Reference Image" />
+                        </a>
                     @endif
 
                     <!-- 游戏详细信息 -->
@@ -190,13 +208,20 @@
                                 <img class="game-avatar" src="{{ asset($game->GameAvatar) }}" alt="Game Avatar" />
                             </a>
                         @else
-                            <p>No Avatar</p>
+                            <a href="{{ route('game.detail', ['game' => $game]) }}">
+                                <img src="https://via.placeholder.com/60x60" src="{{ asset($game->GameAvatar) }}"
+                                    alt="Game Avatar" />
+                            </a>
                         @endif
 
                         <div class="game-info">
                             <p class="game-name">{{ $game->GameName }}</p>
                             <div class="game-meta">
-                                <span class="game-category">{{ $game->GameCategory }}</span>
+                                @forelse (json_decode($game->GameCategory, true) as $category)
+                                    <span class="game-category">{{ $category }}</span>
+                                @empty
+                                    <span class="game-category">{{ $game->GameCategory }}</span>
+                                @endforelse
                             </div>
                         </div>
                     </div>
@@ -204,6 +229,31 @@
             @endforeach
         </div>
     </div>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const images = document.querySelectorAll('.carousel-image');
+            let currentIndex = 0;
+
+            if (images.length > 0) {
+                // 显示第一张图片
+                images[currentIndex].style.display = 'block';
+
+                function showNextImage() {
+                    // 隐藏当前图片
+                    images[currentIndex].style.display = 'none';
+
+                    // 计算下一张图片的索引
+                    currentIndex = (currentIndex + 1) % images.length;
+
+                    // 显示下一张图片
+                    images[currentIndex].style.display = 'block';
+                }
+
+                // 每 3 秒切换一次图片
+                setInterval(showNextImage, 3000);
+            }
+        });
+    </script>
 </body>
 
 </html>

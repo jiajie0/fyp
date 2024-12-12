@@ -19,9 +19,9 @@ return new class extends Migration
 
             $table->string('GameName');
             $table->text('GameDescription');
-            $table->string('GameCategory');
+            $table->json('GameCategory');
             $table->date('GameUploadDate')->default(DB::raw('CURRENT_DATE'));
-            $table->integer('RatingScore')->default(0); 
+            $table->integer('RatingScore')->default(0);
             $table->decimal('GamePrice', 8, 2)->default(0);
             $table->integer('GameAchievementsCount')->default(0);
             $table->string('GameAvatar')->nullable();
