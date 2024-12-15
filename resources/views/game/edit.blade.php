@@ -35,7 +35,7 @@
 
         <div>
             <label for="GameDescription">Game Description</label>
-            <textarea name="GameDescription" id="GameDescription" placeholder="Enter Game Description" rows="4" cols="50">{{ nl2br(e($game->GameDescription)) }}</textarea>
+            <textarea name="GameDescription" id="GameDescription" placeholder="Enter Game Description" rows="4" cols="50">{{e($game->GameDescription) }}</textarea>
         </div>
 
         <div>

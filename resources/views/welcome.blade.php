@@ -130,6 +130,41 @@
         .nav-bar {
             margin-bottom: 20px;
         }
+
+        /* Top New Releases game card 设计 */
+
+        .top-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+            margin-top: 20px;
+            margin-right: 30px;
+        }
+
+        .top-bar h2 {
+            margin: 0;
+            font-size: 24px;
+        }
+
+        .pagination {
+            display: flex;
+            gap: 10px;
+        }
+
+        .pagination button {
+            padding: 5px 10px;
+            background: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .pagination button:disabled {
+            background-color: #cccccc;
+            cursor: not-allowed;
+        }
     </style>
 </head>
 
@@ -184,18 +219,34 @@
             </div>
         </div>
 
-        <h2>Top New Releases</h2>
+
+        <div class="top-bar">
+            <h2>Top New Releases</h2>
+            <div class="pagination">
+                @if ($game->onFirstPage())
+                    <button disabled> <i class="ri-arrow-left-s-line"></i> </button>
+                @else
+                    <a href="{{ $game->previousPageUrl() }}"><button> <i class="ri-arrow-left-s-line"></i> </button></a>
+                @endif
+
+                @if ($game->hasMorePages())
+                    <a href="{{ $game->nextPageUrl() }}"><button><i class="ri-arrow-right-s-line"></i></button></a>
+                @else
+                    <button disabled> <i class="ri-arrow-right-s-line"></i> </button>
+                @endif
+            </div>
+        </div>
         <div class="new-releases">
-            @foreach ($game as $game)
+            @foreach ($game as $g)
                 <div class="game-card">
                     <!-- Make GameReferenceImages clickable -->
-                    @if (!empty($game->GameReferenceImages) && is_array($game->GameReferenceImages))
-                        <a href="{{ route('game.detail', ['game' => $game]) }}">
-                            <img class="reference-image" src="{{ asset($game->GameReferenceImages[0]) }}"
+                    @if (!empty($g->GameReferenceImages) && is_array($g->GameReferenceImages))
+                        <a href="{{ route('game.detail', ['game' => $g]) }}">
+                            <img class="reference-image" src="{{ asset($g->GameReferenceImages[0]) }}"
                                 alt="Game Reference Image" />
                         </a>
                     @else
-                        <a href="{{ route('game.detail', ['game' => $game]) }}">
+                        <a href="{{ route('game.detail', ['game' => $g]) }}">
                             <img src="https://via.placeholder.com/400x200" alt="Game Reference Image" />
                         </a>
                     @endif
@@ -203,24 +254,23 @@
                     <!-- 游戏详细信息 -->
                     <div class="game-details">
                         <!-- Make GameAvatar clickable -->
-                        @if ($game->GameAvatar)
-                            <a href="{{ route('game.detail', ['game' => $game]) }}">
-                                <img class="game-avatar" src="{{ asset($game->GameAvatar) }}" alt="Game Avatar" />
+                        @if ($g->GameAvatar)
+                            <a href="{{ route('game.detail', ['game' => $g]) }}">
+                                <img class="game-avatar" src="{{ asset($g->GameAvatar) }}" alt="Game Avatar" />
                             </a>
                         @else
-                            <a href="{{ route('game.detail', ['game' => $game]) }}">
-                                <img src="https://via.placeholder.com/60x60" src="{{ asset($game->GameAvatar) }}"
-                                    alt="Game Avatar" />
+                            <a href="{{ route('game.detail', ['game' => $g]) }}">
+                                <img src="https://via.placeholder.com/60x60" alt="Game Avatar" />
                             </a>
                         @endif
 
                         <div class="game-info">
-                            <p class="game-name">{{ $game->GameName }}</p>
+                            <p class="game-name">{{ $g->GameName }}</p>
                             <div class="game-meta">
-                                @forelse (json_decode($game->GameCategory, true) as $category)
+                                @forelse (json_decode($g->GameCategory, true) as $category)
                                     <span class="game-category">{{ $category }}</span>
                                 @empty
-                                    <span class="game-category">{{ $game->GameCategory }}</span>
+                                    <span class="game-category">{{ $g->GameCategory }}</span>
                                 @endforelse
                             </div>
                         </div>
@@ -228,6 +278,71 @@
                 </div>
             @endforeach
         </div>
+
+
+
+        <div class="top-bar">
+            <h2>Top Score Games</h2>
+            <div class="pagination">
+                @if ($topScoreGames->onFirstPage())
+                    <button disabled> <i class="ri-arrow-left-s-line"></i> </button>
+                @else
+                    <a href="{{ $topScoreGames->previousPageUrl() }}"><button> <i class="ri-arrow-left-s-line"></i>
+                        </button></a>
+                @endif
+
+                @if ($topScoreGames->hasMorePages())
+                    <a href="{{ $topScoreGames->nextPageUrl() }}"><button><i
+                                class="ri-arrow-right-s-line"></i></button></a>
+                @else
+                    <button disabled><i class="ri-arrow-right-s-line"></i></button>
+                @endif
+            </div>
+        </div>
+        <div class="new-releases">
+            @foreach ($topScoreGames as $g)
+                <div class="game-card">
+                    <!-- Make GameReferenceImages clickable -->
+                    @if (!empty($g->GameReferenceImages) && is_array($g->GameReferenceImages))
+                        <a href="{{ route('game.detail', ['game' => $g]) }}">
+                            <img class="reference-image" src="{{ asset($g->GameReferenceImages[0]) }}"
+                                alt="Game Reference Image" />
+                        </a>
+                    @else
+                        <a href="{{ route('game.detail', ['game' => $g]) }}">
+                            <img src="https://via.placeholder.com/400x200" alt="Game Reference Image" />
+                        </a>
+                    @endif
+
+                    <!-- 游戏详细信息 -->
+                    <div class="game-details">
+                        <!-- Make GameAvatar clickable -->
+                        @if ($g->GameAvatar)
+                            <a href="{{ route('game.detail', ['game' => $g]) }}">
+                                <img class="game-avatar" src="{{ asset($g->GameAvatar) }}" alt="Game Avatar" />
+                            </a>
+                        @else
+                            <a href="{{ route('game.detail', ['game' => $g]) }}">
+                                <img src="https://via.placeholder.com/60x60" alt="Game Avatar" />
+                            </a>
+                        @endif
+
+                        <div class="game-info">
+                            <p class="game-name">{{ $g->GameName }}</p>
+                            <div class="game-meta">
+                                @forelse (json_decode($g->GameCategory, true) as $category)
+                                    <span class="game-category">{{ $category }}</span>
+                                @empty
+                                    <span class="game-category">{{ $g->GameCategory }}</span>
+                                @endforelse
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            @endforeach
+        </div>
+
+
     </div>
     <script>
         document.addEventListener('DOMContentLoaded', () => {

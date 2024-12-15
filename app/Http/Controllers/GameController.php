@@ -182,14 +182,22 @@ class GameController extends Controller
     public function showWelcomePage()
     {
         $events = Event::all();
-        $games = Game::all();
 
-        // Pass the data to the view
+        // 按 GameUploadDate 从最新到最久排序，并分页
+        $games = Game::orderBy('GameUploadDate', 'desc')->paginate(3, ['*'], 'new_page');
+
+        // 按 RatingScore 从高到低排序，并分页
+        $topScoreGames = Game::orderBy('RatingScore', 'desc')->paginate(3, ['*'], 'top_page');
+
+        // 将数据传递到视图
         return view('welcome', [
             'event' => $events,
             'game' => $games,
+            'topScoreGames' => $topScoreGames,
         ]);
     }
+
+
 
     public function showGameDetails(Game $game)
     {
@@ -207,6 +215,14 @@ class GameController extends Controller
         if (Auth::guard('player')->check()) {
             $playerID = Auth::guard('player')->user()->PlayerID;
             $playerRating = $ratings->firstWhere('PlayerID', $playerID);
+        }
+
+        // 检查当前玩家是否已将游戏加入游戏库
+        $isInGameStore = false;
+        if (Auth::guard('player')->check()) {
+            $isInGameStore = \App\Models\GameStore::where('PlayerID', Auth::guard('player')->id())
+                ->where('GameID', $game->GameID)
+                ->exists();
         }
 
         // 统计数据
@@ -235,11 +251,12 @@ class GameController extends Controller
             'game' => $game,
             'developerName' => $developerName,
             'ratings' => $ratings,
-            'playerRating' => $playerRating, // 当前玩家的评论（如果存在）
+            'playerRating' => $playerRating,
             'event' => $event,
             'ratingStats' => $ratingStats,
             'totalMark1' => $totalMark1,
             'totalMark0' => $totalMark0,
+            'isInGameStore' => $isInGameStore,
         ]);
     }
 

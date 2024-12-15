@@ -125,7 +125,8 @@
         }
 
         .info img {
-            max-width: 100px;
+            width: 100px;
+            height: 100px;
             border-radius: 10px;
         }
 
@@ -179,7 +180,7 @@
             cursor: pointer;
             transition: background-color 0.3s;
             min-width: 250px;
-            /* 确保按钮宽度足够 */
+            margin-left: 20px
         }
 
         .add-to-store-section p {
@@ -336,6 +337,7 @@
         }
 
         .rating-textarea {
+            width: 1185px;
             margin-bottom: 15px;
         }
 
@@ -417,27 +419,31 @@
     <div class="main-container">
         <div class="details-box">
             <div class="image-section">
-                <img src="{{ asset($game->GameReferenceImages[0]) }}" alt="Main Game Image" class="main-image"
-                    id="mainImage">
+                <img src="{{ is_array($game->GameReferenceImages) && count($game->GameReferenceImages) > 0 ? asset($game->GameReferenceImages[0]) : 'https://via.placeholder.com/800x450' }}"
+                    alt="Main Game Image" class="main-image" id="mainImage">
 
                 <div class="thumbnail-container" id="thumbnailContainer">
-                    @foreach (array_slice($game->GameReferenceImages, 0, 4) as $index => $image)
-                        <img src="{{ asset($image) }}" alt="Thumbnail {{ $index }}" class="thumbnail"
-                            onclick="changeMainImage('{{ asset($image) }}')">
-                    @endforeach
+                    @if (is_array($game->GameReferenceImages))
+                        @foreach (array_slice($game->GameReferenceImages, 0, 4) as $index => $image)
+                            <img src="{{ asset($image) }}" alt="Thumbnail {{ $index }}" class="thumbnail"
+                                onclick="changeMainImage('{{ asset($image) }}')">
+                        @endforeach
+                    @endif
                 </div>
 
                 <div class="pagination">
                     <button id="prevPage" onclick="changePage(-1)" disabled><strong>
                             < </strong></button>
                     <button id="nextPage" onclick="changePage(1)"
-                        {{ count($game->GameReferenceImages) <= 4 ? 'disabled' : '' }}><strong> > </strong></button>
+                        {{ is_array($game->GameReferenceImages) && count($game->GameReferenceImages) > 4 ? '' : 'disabled' }}><strong>
+                            > </strong></button>
                 </div>
             </div>
 
             <div class="details-section">
                 <div class="info">
-                    <img src="{{ asset($game->GameAvatar) }}" alt="{{ $game->GameName }}">
+                    <img src="{{ $game->GameAvatar ? asset($game->GameAvatar) : 'https://via.placeholder.com/100x100' }}"
+                        alt="{{ $game->GameName }}">
                     <div>
                         <h2>{{ $game->GameName }}</h2>
                         <div class="developer-name">
@@ -458,16 +464,21 @@
 
                 @auth('player')
                     <section class="add-to-store-section">
-                        <form action="{{ route('game.addToStore', $game->GameID) }}" method="POST">
-                            @csrf
-                            <button type="submit" class="add-to-store-btn">Add to My Game</button>
-                        </form>
+                        @if ($isInGameStore)
+                            <button class="add-to-store-btn">Already Added</button>
+                        @else
+                            <form action="{{ route('game.addToStore', $game->GameID) }}" method="POST">
+                                @csrf
+                                <button type="submit" class="add-to-store-btn">Add to My Game</button>
+                            </form>
+                        @endif
                     </section>
                 @else
                     <p>Please <a href="{{ route('player.login') }}">log in</a> to add games to the store.</p>
                 @endauth
             </div>
         </div>
+
 
         <div class="game-description-box">
             <strong>Game Description:</strong>
@@ -576,7 +587,12 @@
                             <div>
                                 <p><em>{{ $rating->RatingText }}</em></p>
                                 <p class="review-date">Rated on
-                                    {{ \Carbon\Carbon::parse($playerRating->RatingTime)->format('Y-m-d H:i:s') }}</p>
+                                    @if ($rating->RatingTime)
+                                        {{ \Carbon\Carbon::parse($rating->RatingTime)->format('Y-m-d H:i:s') }}
+                                    @else
+                                        No rating time available
+                                    @endif
+                                </p>
                                 <p>Total Likes: {{ $rating->TotalLikeReceived }}</p>
                                 @auth('player')
                                     <form action="{{ route('ratings.like', $rating->RatingID) }}" method="POST">
@@ -608,7 +624,8 @@
 
     </div>
     <script>
-        const thumbnails = @json(array_map(fn($image) => asset($image), $game->GameReferenceImages));
+        // If $game->GameReferenceImages is null or empty, use an empty array for thumbnails
+        const thumbnails = @json($game->GameReferenceImages ? array_map(fn($image) => asset($image), $game->GameReferenceImages) : []);
 
         const thumbnailsPerPage = 5;
         let currentPage = 0;
@@ -617,16 +634,22 @@
             const container = document.getElementById('thumbnailContainer');
             container.innerHTML = '';
 
-            const start = currentPage * thumbnailsPerPage;
-            const end = Math.min(start + thumbnailsPerPage, thumbnails.length);
+            // Only render thumbnails if there are any in the array
+            if (thumbnails.length > 0) {
+                const start = currentPage * thumbnailsPerPage;
+                const end = Math.min(start + thumbnailsPerPage, thumbnails.length);
 
-            for (let i = start; i < end; i++) {
-                const img = document.createElement('img');
-                img.src = thumbnails[i];
-                img.alt = `Thumbnail ${i + 1}`;
-                img.className = 'thumbnail';
-                img.onclick = () => changeMainImage(thumbnails[i]);
-                container.appendChild(img);
+                for (let i = start; i < end; i++) {
+                    const img = document.createElement('img');
+                    img.src = thumbnails[i];
+                    img.alt = `Thumbnail ${i + 1}`;
+                    img.className = 'thumbnail';
+                    img.onclick = () => changeMainImage(thumbnails[i]);
+                    container.appendChild(img);
+                }
+            } else {
+                // If there are no thumbnails, you can add an appropriate message or leave it empty
+                container.innerHTML = '<p>No thumbnails available.</p>';
             }
 
             updatePaginationButtons();
@@ -658,8 +681,10 @@
             }
         });
 
+        // Call renderThumbnails on page load
         renderThumbnails();
     </script>
+
 
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
@@ -678,14 +703,14 @@
                 datasets: [{
                         label: 'Recommend',
                         data: ratingMark1, // 数据1：RatingMark 1
-                        backgroundColor: 'rgba(75, 192, 192, 0.5)',
+                        backgroundColor: '#007bff',
                         borderColor: 'rgba(75, 192, 192, 1)',
                         borderWidth: 0,
                     },
                     {
                         label: 'Do Not Recommend',
                         data: ratingMark0, // 数据2：RatingMark 0
-                        backgroundColor: 'rgba(255, 99, 132, 0.5)',
+                        backgroundColor: '#dc3545',
                         borderColor: 'rgba(255, 99, 132, 1)',
                         borderWidth: 0,
                     }
@@ -703,7 +728,8 @@
                     y: {
                         beginAtZero: true,
                         ticks: {
-                            stepSize: 1 // 根据数据范围调整步进
+                            stepSize: 1, // 根据数据范围调整步进
+                            display: false // 隐藏 Y 轴的刻度数字
                         },
                         grid: {
                             display: false // 隐藏 Y 轴的背景网格线
@@ -713,6 +739,7 @@
             }
         });
     </script>
+
     <script>
         document.getElementById('viewMoreBtn').addEventListener('click', function() {
             var descriptionText = document.getElementById('gameDescription');
