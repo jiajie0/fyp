@@ -7,10 +7,14 @@ use App\Models\Game;  //import model
 use App\Models\Developer;
 use App\Models\Rating;
 use App\Models\Event;
+use App\Services\RecommendationService;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;  //生成一个更长、更随机的字符串，从而避免文件名冲突：
+use Illuminate\Support\Facades\DB;
+
+
 
 
 
@@ -259,6 +263,47 @@ class GameController extends Controller
             'isInGameStore' => $isInGameStore,
         ]);
     }
+    public function showRanking()
+    {
+        // 从数据库中获取游戏数据并按照 RatingScore 从高到低排序
+        $games = Game::orderBy('RatingScore', 'desc')->get();
 
+        // 将游戏数据传递给视图
+        return view('game.rating', compact('games'));
+    }
+
+    private $recommendationService;
+
+    public function __construct(RecommendationService $recommendationService)
+    {
+        $this->recommendationService = $recommendationService;
+    }
+
+    public function recommended()
+    {
+        if (Auth::guard('player')->check()) {
+
+            $playerID = Auth::guard('player')->user()->PlayerID;
+            $categories = $this->recommendationService->recommendGamesForPlayer($playerID);
+
+            // 根据类别查找游戏
+            $playerPlayedGames = DB::table('game_store')
+                ->where('PlayerID', $playerID)
+                ->pluck('GameID')
+                ->toArray();
+
+            $recommendations = DB::table('games')
+                ->get()
+                ->filter(function ($game) use ($categories, $playerPlayedGames) {
+                    $gameCategories = json_decode($game->GameCategory, true);
+                    return !in_array($game->GameID, $playerPlayedGames) && count(array_intersect($gameCategories, $categories)) > 0;
+                });
+
+            return view('game.recommended', compact('recommendations'));
+
+        } else {
+            return redirect()->route('player.login')->with('error', 'Please log in first');
+        }
+    }
 
 }

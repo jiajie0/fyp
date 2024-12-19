@@ -16,7 +16,7 @@ class Game extends Model
     protected $keyType = 'string';
     protected $casts = [
         'GameReferenceImages' => 'array', // 自动处理 JSON 字段为数组
-        'GameCategory' => 'array',
+        'GameCategory' => 'string',
     ];
 
 

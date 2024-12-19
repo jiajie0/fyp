@@ -5,176 +5,20 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Home Page</title>
-    <link href="https://cdn.jsdelivr.net/npm/remixicon/fonts/remixicon.css" rel="stylesheet">
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            display: flex;
-            background-color: #f9f9f9;
-        }
+    <link href="https://cdn.jsdelivr.net/npm/remixicon/fonts/remixicon.css" rel="stylesheet">{{-- icon css --}}
+    <link href="{{ asset('css/styles.css') }}" rel="stylesheet"> {{-- my css --}}
 
-        .sidebar {
-            width: 150px;
-            background-color: #f4f4f4;
-            padding: 20px;
-            height: 100% box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
-        }
-
-        .sidebar ul {
-            list-style: none;
-            padding: 0;
-        }
-
-        .sidebar ul li {
-            margin: 20px 0;
-        }
-
-        .sidebar ul li a {
-            text-decoration: none;
-            color: #333;
-            display: flex;
-            align-items: center;
-        }
-
-        .sidebar ul li a .icon {
-            margin-right: 10px;
-        }
-
-        .sidebar ul li a:hover {
-            color: #f39c12;
-        }
-
-
-        .content {
-            flex-grow: 1;
-            padding: 20px;
-        }
-
-        .top-banner img {
-            width: 100%;
-            max-width: 800px;
-            height: auto;
-            border-radius: 10px;
-        }
-
-        .new-releases {
-            display: flex;
-            gap: 15px;
-            margin-top: 20px;
-            flex-wrap: wrap;
-        }
-
-        .game-card {
-            width: 400px;
-            margin: 5px;
-            border: 1px solid #ddd;
-            border-radius: 10px;
-            overflow: hidden;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            background-color: #fff;
-        }
-
-        .game-card img.reference-image {
-            width: 90%;
-            height: 200px;
-            margin-left: 5%;
-            margin-right: 5%;
-            margin-top: 5%;
-            object-fit: cover;
-            border-radius: 10px;
-        }
-
-        .game-details {
-            display: flex;
-            align-items: center;
-            padding: 10px;
-            gap: 15px;
-        }
-
-        .game-avatar {
-            width: 60px;
-            height: 60px;
-            border-radius: 10px;
-            object-fit: cover;
-            margin-left: 9px;
-        }
-
-        .game-info {
-            flex-grow: 1;
-        }
-
-        .game-name {
-            font-size: 18px;
-            font-weight: bold;
-            color: #333;
-            margin: 0;
-        }
-
-        .game-meta {
-            font-size: 14px;
-            color: #888;
-            margin: 5px 0;
-        }
-
-        .game-category {
-            display: inline-block;
-            padding: 5px 5px;
-            background-color: #f0f0f0;
-            margin-right: 2px;
-            margin-bottom: 5px;
-            border-radius: 10px;
-        }
-
-
-        .nav-bar {
-            margin-bottom: 20px;
-        }
-
-        /* Top New Releases game card 设计 */
-
-        .top-bar {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 10px;
-            margin-top: 20px;
-            margin-right: 30px;
-        }
-
-        .top-bar h2 {
-            margin: 0;
-            font-size: 24px;
-        }
-
-        .pagination {
-            display: flex;
-            gap: 10px;
-        }
-
-        .pagination button {
-            padding: 5px 10px;
-            background: #007bff;
-            color: #fff;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-        }
-
-        .pagination button:disabled {
-            background-color: #cccccc;
-            cursor: not-allowed;
-        }
-    </style>
 </head>
 
 <body>
     <div class="sidebar">
         <h2>fyp app</h2>
         <ul>
+
+
             <li><a href="#"><i class="ri-home-line"></i> Home</a></li>
-            <li><a href="#"><i class="ri-trophy-line"></i> Rating</a></li>
-            <li><a href="#"><i class="ri-star-line"></i> Recommended</a></li>
+            <li><a href="{{ route('game.rating') }}"><i class="ri-trophy-line"></i> Rating</a></li>
+            <li><a href="{{ route('game.recommended') }}"><i class="ri-star-line"></i> Recommended</a></li>
             <li><a href="#"><i class="ri-arrow-up-line"></i> Update</a></li>
             <li><a href="{{ route('game_store.index') }}"><i class="ri-gamepad-line"></i> My Game</a></li>
             <li><a href="#"><i class="ri-settings-line"></i> Settings</a></li>
@@ -210,23 +54,32 @@
             <p>Please <a href="{{ route('player.login') }}">log in</a> to see your details.</p>
         @endauth
 
-        <div class="top-banner">
+        <div class="event">
             <div id="carousel" class="carousel">
-                @foreach ($event as $event)
-                    <img class="carousel-image" src="{{ asset($event->EventImageURL) }}" alt="{{ $event->EventName }}"
-                        style="display: none;">
-                @endforeach
+                @if ($event->isEmpty())
+                    <img class="carousel-image placeholder" src="https://via.placeholder.com/800x450" alt="No Event Available">
+                @else
+                    @foreach ($event as $eventItem)
+                        <img class="carousel-image" src="{{ asset($eventItem->EventImageURL) }}" alt="{{ $eventItem->EventName }}" style="display: none;">
+                    @endforeach
+                @endif
             </div>
+        </div>
+
+        <div class="eventbtn">
+            <button id="prev" class="carousel-button"><i class="ri-arrow-left-s-line"></i></button>
+            <button id="next" class="carousel-button"><i class="ri-arrow-right-s-line"></i></button>
         </div>
 
 
         <div class="top-bar">
-            <h2>Top New Releases</h2>
+            <h2>New Releases Game</h2>
             <div class="pagination">
                 @if ($game->onFirstPage())
                     <button disabled> <i class="ri-arrow-left-s-line"></i> </button>
                 @else
-                    <a href="{{ $game->previousPageUrl() }}"><button> <i class="ri-arrow-left-s-line"></i> </button></a>
+                    <a href="{{ $game->previousPageUrl() }}"><button> <i class="ri-arrow-left-s-line"></i>
+                        </button></a>
                 @endif
 
                 @if ($game->hasMorePages())
@@ -344,31 +197,7 @@
 
 
     </div>
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            const images = document.querySelectorAll('.carousel-image');
-            let currentIndex = 0;
-
-            if (images.length > 0) {
-                // 显示第一张图片
-                images[currentIndex].style.display = 'block';
-
-                function showNextImage() {
-                    // 隐藏当前图片
-                    images[currentIndex].style.display = 'none';
-
-                    // 计算下一张图片的索引
-                    currentIndex = (currentIndex + 1) % images.length;
-
-                    // 显示下一张图片
-                    images[currentIndex].style.display = 'block';
-                }
-
-                // 每 3 秒切换一次图片
-                setInterval(showNextImage, 3000);
-            }
-        });
-    </script>
+    <script src="{{ asset('js/carousel.js') }}"></script>
 </body>
 
 </html>

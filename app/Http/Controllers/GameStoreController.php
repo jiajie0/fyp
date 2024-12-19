@@ -78,6 +78,8 @@ class GameStoreController extends Controller
         }
         $gameAchievementsCount = $game->GameAchievementsCount;
 
+        $gameCategory = $game->GameCategory;
+
         // 添加到游戏商店
         GameStore::create([
             'PlayerID' => $playerID,
@@ -85,6 +87,8 @@ class GameStoreController extends Controller
             'GameAchievementsCount' => $gameAchievementsCount,
             'PlayerAchievementsCount' => 0,
             'TotalPlayTime' => 0,
+            'GameCategory' => $gameCategory,
+
         ]);
 
         return redirect()->back()->with('success', 'Game added to your store successfully!');

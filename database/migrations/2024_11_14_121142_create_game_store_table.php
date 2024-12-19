@@ -23,6 +23,7 @@ return new class extends Migration {
             $table->primary(['PlayerID', 'GameID']);
             $table->boolean('Has50PercentScore')->default(0);
             $table->boolean('Has80PercentScore')->default(0);
+            $table->json('GameCategory');
             $table->timestamps();
         });
     }

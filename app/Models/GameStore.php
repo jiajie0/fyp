@@ -26,7 +26,8 @@ class GameStore extends Model
         'GameID',
         'GameAchievementsCount',
         'PlayerAchievementsCount',
-        'TotalPlayTime'
+        'TotalPlayTime',
+        'GameCategory'
     ];
 
     // 关联到 Player 模型：每个 GameStore 记录属于一个 Player

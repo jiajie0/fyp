@@ -9,6 +9,7 @@ use App\Http\Controllers\GameController;
 use App\Http\Controllers\GameStoreController;
 use App\Http\Controllers\RatingController;
 use App\Http\Controllers\EventController;
+use App\Http\Controllers\RecommendedController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Middleware\IsPlayer;
 use App\Http\Middleware\IsDeveloper;
@@ -22,6 +23,16 @@ Route::post('/games/{gameId}/add-hour', [GameStoreController::class, 'addPlayTim
 Route::post('/game-store/{gameId}/add-achievement', [GameStoreController::class, 'addAchievementsCount'])->name('game-store.add-achievement');
 
 
+Route::get('/game/recommended', [GameController::class, 'recommended'])->name('game.recommended');
+
+
+
+
+
+
+// Route::get('/game/recommended', [RecommendedController::class, 'show'])->name('game.recommended');
+
+
 Route::get('/', [GameController::class, 'showWelcomePage'])->name('welcome');
 Route::get('/game/{game}/detail', [GameController::class, 'showGameDetails'])->name('game.detail');
 Route::post('/game/{gameID}/add-to-store', [GameStoreController::class, 'addToGameStore'])->name('game.addToStore');
@@ -30,6 +41,7 @@ Route::get('/rating/{ratingID}/edit', [RatingController::class, 'edit'])->name('
 Route::put('/rating/{ratingID}/update', [RatingController::class, 'update'])->name('game.updateRating');
 Route::delete('/rating/{ratingID}/delete', [RatingController::class, 'destroy'])->name('game.deleteRating');
 Route::post('/ratings/{rating}/like', [RatingController::class, 'like'])->name('ratings.like');
+Route::get('/game/rating', [GameController::class, 'showRanking'])->name('game.rating');
 
 Route::get('/player-login', [AuthController::class, 'showPlayerLogin'])->name('player.login');
 Route::post('/player-login', [AuthController::class, 'playerLogin']);
